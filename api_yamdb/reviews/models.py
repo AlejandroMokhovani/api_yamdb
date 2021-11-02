@@ -4,7 +4,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    # email = models.EmailField(max_length=254, blank=False)
+    email = models.EmailField('email', max_length=254, blank=False)
 
 
     USER = 'USR'
@@ -16,10 +16,9 @@ class User(AbstractUser):
         (ADMIN, 'admin'),
     ]
     role = models.CharField(
+        'Роль',
         max_length=3,
         choices=ROLE_CHOICES,
         default=USER,
     )
-    bio = models.TextField('Биография', blank=True,)
-
-    REQUIRED_FIELDS = ['email']
+    bio = models.TextField('Биография', blank=True)
