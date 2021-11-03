@@ -1,6 +1,45 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.db.models import Q
+
 from django.core.exceptions import ValidationError
+
+def ScoreValidator(value):
+    if not value >= 0 and value <= 10:
+        raise ValidationError('incorrect Score')
+
+
+class User(AbstractUser):
+    email = models.EmailField('email', max_length=254, blank=False)
+    USER = 'USR'
+    MODERATOR = 'MDR'
+    ADMIN = 'ADM'
+    ROLE_CHOICES = [
+        (USER, 'user'),
+        (MODERATOR, 'moderator'),
+        (ADMIN, 'admin'),
+    ]
+    role = models.CharField(
+        'role',
+        max_length=3,
+        choices=ROLE_CHOICES,
+        default=USER,
+    )
+    bio = models.TextField('biography', blank=True)
+
+    class Meta:
+        constraints = [
+            # юзер должен быть уникальным
+            models.UniqueConstraint(
+                fields=['username', 'email'],
+                name='unique_user'
+            ),
+            # username юзера не должен быть 'me'
+            models.CheckConstraint(
+                check=~Q(username__iexact='me'),
+                name='cant_given_username'
+            ),
+        ]
 
 
 class Category(models.Model):
@@ -39,7 +78,7 @@ class Title(models.Model):
     name = models.CharField(max_length=256, db_index=True,
                             verbose_name='Название произведения',
                             help_text='Укажите название произведения')
-                            
+
     year = models.DateField(null=True, blank=True,
                             verbose_name='Год выпуска',
                             help_text='Задайте год выпуска')
@@ -59,16 +98,10 @@ class Title(models.Model):
     def __str__(self):
         return self.name
 
-User = get_user_model()
-
-def ScoreValidator(value):
-    if not value >= 0 and value <= 10:
-        raise ValidationError('incorrect Score')
-
 
 class Review(models.Model):
     titles = models.ForeignKey(
-        Title, on_delete=models.CASCADE
+        Title, on_delete=models.CASCADE, related_name='reviews'
     )
     score = models.IntegerField(
         verbose_name='Оценка',
@@ -76,7 +109,7 @@ class Review(models.Model):
         default=0,
         blank=True
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
 
     class Meta:
         unique_together = ('user', 'titles')
@@ -84,7 +117,7 @@ class Review(models.Model):
 
 class Comment(models.Model):
     titles = models.ForeignKey(
-        Title, on_delete=models.CASCADE
+        Title, on_delete=models.CASCADE, related_name='comments'
     )
     author = models.ForeignKey(
         User,
