@@ -1,12 +1,10 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-# from django.utils.translation import gettext_lazy as _
+from django.db.models import Q
 
 
 class User(AbstractUser):
     email = models.EmailField('email', max_length=254, blank=False)
-
-
     USER = 'USR'
     MODERATOR = 'MDR'
     ADMIN = 'ADM'
@@ -16,9 +14,23 @@ class User(AbstractUser):
         (ADMIN, 'admin'),
     ]
     role = models.CharField(
-        'Роль',
+        'role',
         max_length=3,
         choices=ROLE_CHOICES,
         default=USER,
     )
-    bio = models.TextField('Биография', blank=True)
+    bio = models.TextField('biography', blank=True)
+
+    class Meta:
+        constraints = [
+            # юзер должен быть уникальным
+            models.UniqueConstraint(
+                fields=['username', 'email'],
+                name='unique_user'
+            ),
+            # username юзера не должен быть 'me'
+            models.CheckConstraint(
+                check=~Q(username__iexact='me'),
+                name='cant_given_username'
+            ),
+        ]

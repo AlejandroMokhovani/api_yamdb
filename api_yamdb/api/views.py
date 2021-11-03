@@ -1,3 +1,13 @@
-from django.shortcuts import render
+from rest_framework import viewsets
 
-# Create your views here.
+from reviews.models import User
+
+from .serializers import UserSerializer, AdminSerializer
+
+
+class AdminViewSet(viewsets.ModelViewSet):
+    pass
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    pass
