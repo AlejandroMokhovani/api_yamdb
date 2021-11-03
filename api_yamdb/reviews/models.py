@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
+
 
 class Category(models.Model):
     name = models.CharField(max_length=256, db_index=True,
@@ -36,7 +39,7 @@ class Title(models.Model):
     name = models.CharField(max_length=256, db_index=True,
                             verbose_name='Название произведения',
                             help_text='Укажите название произведения')
-                            
+
     year = models.DateField(null=True, blank=True,
                             verbose_name='Год выпуска',
                             help_text='Задайте год выпуска')
@@ -55,3 +58,44 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
+
+User = get_user_model()
+
+def ScoreValidator(value):
+    if not value >= 0 and value <= 10:
+        raise ValidationError('incorrect Score')
+
+
+class Review(models.Model):
+    titles = models.ForeignKey(
+        Title, on_delete=models.CASCADE
+    )
+    score = models.IntegerField(
+        verbose_name='Оценка',
+        validators=[ScoreValidator],
+        default=0,
+        blank=True
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'titles')
+
+
+class Comment(models.Model):
+    titles = models.ForeignKey(
+        Title, on_delete=models.CASCADE
+    )
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Автор',
+        related_name='comments'
+    )
+    text = models.TextField(
+        help_text='Введите текст коментария',
+        verbose_name='Текст коментария',
+    )
+    created = models.DateTimeField(
+        auto_now_add=True
+    )
