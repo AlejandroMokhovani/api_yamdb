@@ -4,6 +4,10 @@ from django.db.models import Q
 
 from django.core.exceptions import ValidationError
 
+def ScoreValidator(value):
+    if not value >= 0 and value <= 10:
+        raise ValidationError('incorrect Score')
+
 
 class User(AbstractUser):
     email = models.EmailField('email', max_length=254, blank=False)
@@ -93,12 +97,6 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
-
-User = get_user_model()
-
-def ScoreValidator(value):
-    if not value >= 0 and value <= 10:
-        raise ValidationError('incorrect Score')
 
 
 class Review(models.Model):
