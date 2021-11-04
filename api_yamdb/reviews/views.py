@@ -41,7 +41,7 @@ class TitleViewSet(viewsets.ModelViewSet):
     ordering_fields = ('name',)
     ordering = ('name',)
 
-
+# view V1
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
 

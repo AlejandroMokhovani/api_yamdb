@@ -38,7 +38,7 @@ class TitleSerializer(serializers.ModelSerializer):
                   'genre', 'category')
         read_only_fields = ('id',)
 
-
+# Сериализаторы V1
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
