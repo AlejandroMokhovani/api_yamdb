@@ -1,12 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q
-
-from django.core.exceptions import ValidationError
-
-def ScoreValidator(value):
-    if not value >= 0 and value <= 10:
-        raise ValidationError('incorrect Score')
+from .validators import score_validation, year_validation
 
 
 class User(AbstractUser):
@@ -80,6 +75,7 @@ class Title(models.Model):
                             help_text='Укажите название произведения')
 
     year = models.DateField(null=True, blank=True,
+                            validators=[year_validation],
                             verbose_name='Год выпуска',
                             help_text='Задайте год выпуска')
 
@@ -87,9 +83,9 @@ class Title(models.Model):
                                    verbose_name='Описание')
     category = models.ForeignKey(Category, verbose_name='Категория',
                                  on_delete=models.SET_NULL,
-                                 related_name="titles", blank=True, null=True)
+                                 related_name='titles', blank=True, null=True)
     genre = models.ManyToManyField(Genre, verbose_name='Жанр',
-                                   related_name="titles", blank=True)
+                                   related_name='titles', blank=True)
 
     class Meta:
         verbose_name = 'Произведение'
@@ -101,15 +97,20 @@ class Title(models.Model):
 
 class Review(models.Model):
     titles = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='reviews'
+        Title, on_delete=models.CASCADE,
+        related_name='reviews'
     )
     score = models.IntegerField(
         verbose_name='Оценка',
-        validators=[ScoreValidator],
+        validators=[score_validation],
         default=0,
         blank=True
     )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reviews'
+    )
 
     class Meta:
         unique_together = ('user', 'titles')
@@ -117,7 +118,9 @@ class Review(models.Model):
 
 class Comment(models.Model):
     titles = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='comments'
+        Title,
+        on_delete=models.CASCADE,
+        related_name='comments'
     )
     author = models.ForeignKey(
         User,
