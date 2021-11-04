@@ -16,6 +16,7 @@ router.register('users', AdminViewSet, basename='users')
 router.register('categories/', CategoryViewSet, basename='categories')
 router.register('genres/', GenreViewSet, basename='genres')
 router.register('titles/', TitleViewSet, basename='titles')
+# + urls comments, reviews
 router.register('comments/', CommentViewSet, basename='comments')
 router.register('reviews/', ReviewViewSet, basename='reviews')
 
