@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from reviews.models import Category, Genre, Title, User
-
+from reviews.models import Comment, Review
 
 class AdminSerializer(serializers.ModelSerializer):
 
@@ -37,3 +37,23 @@ class TitleSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'year', 'description',
                   'genre', 'category')
         read_only_fields = ('id',)
+
+# Сериализаторы V1
+class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True, slug_field='username'
+    )
+
+    class Meta:
+        fields = '__all__'
+        model = Comment
+
+class ReviewSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(
+        read_only=True, slug_field='username',
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        fields = '__all__'
+        model = Review

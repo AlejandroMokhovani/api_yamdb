@@ -3,10 +3,10 @@ from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
                                    ListModelMixin)
 from api.permissions import IsAdminOrReadOnly
 from api.serializers import (CategorySerializer, GenreSerializer,
-                             TitleSerializer)
+                             TitleSerializer , CommentSerializer, ReviewSerializer)
 
 from .models import Category, Genre, Title
-
+from django.shortcuts import get_object_or_404
 
 class CustomMixin(ListModelMixin, CreateModelMixin, DestroyModelMixin,
                   viewsets.GenericViewSet):
@@ -40,3 +40,29 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     ordering_fields = ('name',)
     ordering = ('name',)
+
+# view V1
+class ReviewViewSet(viewsets.ModelViewSet):
+    serializer_class = ReviewSerializer
+
+    def get_queryset(self):
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        new_queryset = title.reviews.all()
+        return new_queryset
+
+    def perform_create(self, serializer):
+        get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        serializer.save(user=self.request.user)
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    serializer_class = CommentSerializer
+    
+    def get_queryset(self):
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        new_queryset = title.comments.all()
+        return new_queryset
+
+    def perform_create(self, serializer):
+        get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        serializer.save(author=self.request.user)
