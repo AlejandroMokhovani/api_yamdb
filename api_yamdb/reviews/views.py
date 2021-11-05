@@ -6,7 +6,7 @@ from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
 from api.permissions import IsAdminOrReadOnly
 from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, ReviewSerializer,
-                             TitleSerializer)
+                             TitleSerializer, TitleCreateSerializer)
 
 from .models import Category, Genre, Title
 
@@ -43,6 +43,11 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     ordering_fields = ('name',)
     ordering = ('name',)
+
+    def get_serializer_class(self):
+        if self.action in ('create', 'partial_update'):
+            return TitleCreateSerializer
+        return TitleSerializer
 
 # view V1
 class ReviewViewSet(viewsets.ModelViewSet):

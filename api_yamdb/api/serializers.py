@@ -38,6 +38,22 @@ class TitleSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
+class TitleCreateSerializer(serializers.ModelSerializer):
+    category = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Category.objects.all()
+    )
+    genre = serializers.SlugRelatedField(
+        slug_field='slug',
+        queryset=Genre.objects.all(),
+        many=True
+    )
+
+    class Meta:
+        fields = '__all__'
+        model = Title
+
+
 # Сериализаторы V1
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
