@@ -1,12 +1,15 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import filters, viewsets
 from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
                                    ListModelMixin)
+
 from api.permissions import IsAdminOrReadOnly
-from api.serializers import (CategorySerializer, GenreSerializer,
-                             TitleSerializer , CommentSerializer, ReviewSerializer)
+from api.serializers import (CategorySerializer, CommentSerializer,
+                             GenreSerializer, ReviewSerializer,
+                             TitleSerializer)
 
 from .models import Category, Genre, Title
-from django.shortcuts import get_object_or_404
+
 
 class CustomMixin(ListModelMixin, CreateModelMixin, DestroyModelMixin,
                   viewsets.GenericViewSet):
