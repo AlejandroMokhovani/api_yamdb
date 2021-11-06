@@ -5,24 +5,18 @@ from django.core.mail import send_mail
 
 from reviews.models import User
 
-<<<<<<< HEAD
-from .serializers import AdminSerializer, UserSerializer
-=======
-import random
->>>>>>> auth_and_users
-
 # for api view
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
 
-from .serializers import CreateUserSerializer, CreateUserInBaseSerializer
+from .serializers import CreateUserSerializer
 from .permissions import IsAdmin
 
 
-def create_confirmation_code():
-    return random.randint(100000000000, 999999999999)
+# def create_confirmation_code():
+#     return random.randint(100000000000, 999999999999)
 
 
 # @api_view(['POST'])

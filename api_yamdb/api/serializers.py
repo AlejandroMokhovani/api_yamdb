@@ -5,8 +5,6 @@ from rest_framework.validators import UniqueTogetherValidator
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
-
-
     class Meta:
         fields = ('username', 'email', 'first_name', 'last_name', 'bio',
                   'role')
@@ -23,15 +21,6 @@ class CreateUserSerializer(serializers.ModelSerializer):
                 )
             ]
 
-
-class CreateUserInBaseSerializer(serializers.ModelSerializer):
-
-
-    class Meta:
-        fields = ('username', 'email')
-        model = User
-
-<<<<<<< HEAD
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -59,7 +48,7 @@ class TitleSerializer(serializers.ModelSerializer):
         score_average = sum(scores.score) / len(scores.score)
         return score_average
 
-        
+
 
 
 class TitleCreateSerializer(serializers.ModelSerializer):
@@ -98,15 +87,3 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Review
-=======
-        validators = [
-                UniqueTogetherValidator(
-                    queryset=User.objects.all(),
-                    fields=('email',)
-                ),
-                UniqueTogetherValidator(
-                    queryset=User.objects.all(),
-                    fields=('username',)
-                )
-            ]
->>>>>>> auth_and_users
