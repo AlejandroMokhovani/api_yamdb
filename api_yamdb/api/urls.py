@@ -1,13 +1,26 @@
+<<<<<<< HEAD
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
+=======
+# from rest_framework_simplejwt.views import (
+#     TokenObtainPairView,
+#     TokenRefreshView,
+# )
+
+from django.urls import include, path
+from rest_framework import routers
+
+from .views import UsersViewSet, SingleUserViewSet
+>>>>>>> auth_and_users
 
 from reviews.views import (CategoryViewSet, CommentViewSet, GenreViewSet,
                            ReviewViewSet, TitleViewSet)
 
 from .views import AdminViewSet, UserViewSet
 
+<<<<<<< HEAD
 router = DefaultRouter()
 router.register('users', AdminViewSet, basename='users')
 # router.register('users/me/', UserViewSet)
@@ -24,4 +37,15 @@ urlpatterns = [
     path('v1/auth/token/',
     TokenObtainPairView.as_view(),
     name='token_obtain_pair'),
+=======
+
+router.register(r'users', UsersViewSet)
+# router.register('users/me', SingleUserViewSet, basename='me')
+
+urlpatterns = [
+    path('v1/', include(router.urls)),
+    # path('v1/pe/', create_user)
+    # path('v1/auth/signup/'),
+    # path('v1/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+>>>>>>> auth_and_users
 ]

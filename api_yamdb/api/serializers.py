@@ -1,20 +1,37 @@
 from rest_framework import serializers
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
+from rest_framework.validators import UniqueTogetherValidator
 
-class AdminSerializer(serializers.ModelSerializer):
+
+class CreateUserSerializer(serializers.ModelSerializer):
+
 
     class Meta:
-        fields = '__all__'
+        fields = ('username', 'email', 'first_name', 'last_name', 'bio',
+                  'role')
         model = User
 
+        validators = [
+                UniqueTogetherValidator(
+                    queryset=User.objects.all(),
+                    fields=('email',)
+                ),
+                UniqueTogetherValidator(
+                    queryset=User.objects.all(),
+                    fields=('username',)
+                )
+            ]
 
-class UserSerializer(serializers.ModelSerializer):
+
+class CreateUserInBaseSerializer(serializers.ModelSerializer):
+
 
     class Meta:
-        fields = '__all__'
+        fields = ('username', 'email')
         model = User
 
+<<<<<<< HEAD
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -81,3 +98,15 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Review
+=======
+        validators = [
+                UniqueTogetherValidator(
+                    queryset=User.objects.all(),
+                    fields=('email',)
+                ),
+                UniqueTogetherValidator(
+                    queryset=User.objects.all(),
+                    fields=('username',)
+                )
+            ]
+>>>>>>> auth_and_users

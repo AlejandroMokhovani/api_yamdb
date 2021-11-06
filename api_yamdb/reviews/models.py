@@ -7,9 +7,9 @@ from .validators import score_validation, year_validation
 
 class User(AbstractUser):
     email = models.EmailField('email', max_length=254, blank=False)
-    USER = 'USR'
-    MODERATOR = 'MDR'
-    ADMIN = 'ADM'
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
     ROLE_CHOICES = [
         (USER, 'user'),
         (MODERATOR, 'moderator'),
@@ -17,18 +17,26 @@ class User(AbstractUser):
     ]
     role = models.CharField(
         'role',
-        max_length=3,
+        max_length=10,
         choices=ROLE_CHOICES,
         default=USER,
     )
     bio = models.TextField('biography', blank=True)
+    confirmation_code = models.CharField(max_length=12)
+
+    def __str__(self):
+        return self.username
 
     class Meta:
         constraints = [
             # юзер должен быть уникальным
             models.UniqueConstraint(
-                fields=['username', 'email'],
-                name='unique_user'
+                fields=['username',],
+                name='unique_username'
+            ),
+            models.UniqueConstraint(
+                fields=['email',],
+                name='unique_email'
             ),
             # username юзера не должен быть 'me'
             models.CheckConstraint(
