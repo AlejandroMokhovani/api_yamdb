@@ -37,6 +37,13 @@ class TitleSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id',)
 
+    def score_average(self):
+        scores = Review.objects.filter(title_id=self.initial_data.id)
+        score_average = sum(scores.score) / len(scores.score)
+        return score_average
+
+        
+
 
 class TitleCreateSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(
