@@ -20,13 +20,21 @@ class User(AbstractUser):
         default=USER,
     )
     bio = models.TextField('biography', blank=True)
+    confirmation_code = models.CharField(max_length=12)
+
+    def __str__(self):
+        return self.username
 
     class Meta:
         constraints = [
             # юзер должен быть уникальным
             models.UniqueConstraint(
-                fields=['username', 'email'],
-                name='unique_user'
+                fields=['username',],
+                name='unique_username'
+            ),
+            models.UniqueConstraint(
+                fields=['email',],
+                name='unique_email'
             ),
             # username юзера не должен быть 'me'
             models.CheckConstraint(
