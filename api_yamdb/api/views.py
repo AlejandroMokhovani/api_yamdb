@@ -7,29 +7,26 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from reviews.models import User
 
-<<<<<<< HEAD
-=======
+
 from django.utils.crypto import get_random_string
-from django.contrib.auth.hashers import make_pmake_password для одного значения генериру
+# from django.contrib.auth.hashers import make_password
 
 
 import random
 
->>>>>>> auth_and_users
+
 # for api view
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
 
-<<<<<<< HEAD
+
 from .serializers import CreateUserSerializer
 from .permissions import IsAdmin
 
 
-# def create_confirmation_code():
-#     return random.randint(100000000000, 999999999999)
-=======
+
 from .serializers import (
     CreateUserSerializer,
     CreateUserInBaseSerializer,
@@ -67,7 +64,7 @@ def create_user(request):
         confirmation_code = get_random_string(10)
 
         code = hash(confirmation_code)
->>>>>>> auth_and_users
+
 
         request.data.update({'confirmation_code': code})
 
