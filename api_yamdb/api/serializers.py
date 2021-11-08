@@ -28,7 +28,7 @@ class CreateUserInBaseSerializer(serializers.ModelSerializer):
 
 
     class Meta:
-        fields = ('username', 'email')
+        fields = ('username', 'email', 'confirmation_code')
         model = User
 
         validators = [
@@ -41,3 +41,10 @@ class CreateUserInBaseSerializer(serializers.ModelSerializer):
                     fields=('username',)
                 )
             ]
+
+
+class CreateTokenSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ('username', 'confirmation_code')
+        model = User
