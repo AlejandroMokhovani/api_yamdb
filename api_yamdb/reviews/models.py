@@ -6,6 +6,7 @@ from .validators import score_validation, year_validation
 
 
 class User(AbstractUser):
+    id = models.BigAutoField(primary_key=True)
     email = models.EmailField('email', max_length=254, blank=False)
     USER = 'user'
     MODERATOR = 'moderator'
@@ -22,7 +23,7 @@ class User(AbstractUser):
         default=USER,
     )
     bio = models.TextField('biography', blank=True)
-    confirmation_code = models.CharField(max_length=12)
+    confirmation_code = models.CharField(max_length=254)
 
     def __str__(self):
         return self.username

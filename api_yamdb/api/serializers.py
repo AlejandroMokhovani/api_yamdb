@@ -22,6 +22,32 @@ class CreateUserSerializer(serializers.ModelSerializer):
             ]
 
 
+class CreateUserInBaseSerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        fields = ('username', 'email', 'confirmation_code')
+        model = User
+
+        validators = [
+                UniqueTogetherValidator(
+                    queryset=User.objects.all(),
+                    fields=('email',)
+                ),
+                UniqueTogetherValidator(
+                    queryset=User.objects.all(),
+                    fields=('username',)
+                )
+            ]
+
+
+class CreateTokenSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ('username', 'confirmation_code')
+        model = User
+
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category

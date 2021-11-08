@@ -5,11 +5,9 @@ from rest_framework_simplejwt.views import (TokenObtainPairView,
 
 from rest_framework import routers
 
-from .views import UsersViewSet
-
 from reviews.views import (CategoryViewSet, CommentViewSet, GenreViewSet,
                            ReviewViewSet, TitleViewSet)
-
+from .views import UsersViewSet, SingleUserViewSet, create_user, create_token
 
 router = DefaultRouter()
 
@@ -24,7 +22,6 @@ router.register('reviews', ReviewViewSet, basename='reviews')
 urlpatterns = [
     path('v1/', include(router.urls)),
   #  path('v1/auth/signup/'),
-    path('v1/auth/token/',
-    TokenObtainPairView.as_view(),
-    name='token_obtain_pair'),
+    path('v1/auth/signup/', create_user),
+    path('v1/auth/token/', create_token),
 ]
