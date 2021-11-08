@@ -60,14 +60,14 @@ def create_user(request):
 
         serializer = CreateUserInBaseSerializer(data=request.data)
 
-        email = request.data['email']
+        email = request.data.get('email')
         confirmation_code = get_random_string(10)
 
         code = hash(confirmation_code)
 
-
+        request.data._mutable = True
         request.data.update({'confirmation_code': code})
-
+        request.data._mutable = False
 
         if serializer.is_valid():
             serializer.save()
@@ -83,18 +83,20 @@ def create_token(request):
         #
         serializer = CreateTokenSerializer(data=request.data)
 
-        request_code = hash(request.data['confirmation_code'])
-
-        user = User.objects.get(username=request.data['username'])
+        request_code = hash(request.data.get('confirmation_code'))
+        
+        user = User.objects.get(username=request.data.get('username'))
         user_code = user.confirmation_code
 
-        print(user.confirmation_code)
+        print(request_code)
+        print(user_code)
 
+        # if request_code == user_code:
         if True:
             token = get_tokens_for_user(user)
             return Response(token, status=status.HTTP_200_OK)
         else:
-            print('failed')
+            return Response('failed', status=status.HTTP_400_BAD_REQUEST)
 
 
 
