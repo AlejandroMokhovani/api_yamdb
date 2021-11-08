@@ -8,7 +8,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import User
 
 from django.utils.crypto import get_random_string
-from django.contrib.auth.hashers import make_pmake_password для одного значения генериру
 
 
 import random
