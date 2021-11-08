@@ -28,8 +28,9 @@ class CreateUserInBaseSerializer(serializers.ModelSerializer):
 
 
     class Meta:
-        fields = ('username', 'email', 'confirmation_code')
+        fields = ('username', 'email')
         model = User
+        read_only_fields = ('confirmation_code',)
 
         validators = [
                 UniqueTogetherValidator(
@@ -46,5 +47,5 @@ class CreateUserInBaseSerializer(serializers.ModelSerializer):
 class CreateTokenSerializer(serializers.ModelSerializer):
 
     class Meta:
-        fields = ('username', 'confirmation_code')
+        fields = ('token',)
         model = User

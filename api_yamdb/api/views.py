@@ -9,6 +9,8 @@ from reviews.models import User
 
 from django.utils.crypto import get_random_string
 
+from django.core import exceptions
+
 
 import random
 
@@ -56,20 +58,17 @@ def create_user(request):
 
 
         confirmation_code = get_random_string(10)
-        confirmation_code = confirmation_code
 
-        code = hash(confirmation_code)
+        # code = hash(confirmation_code)
+        code = confirmation_code
 
-        request.data._mutable = True
-        request.data.update({'confirmation_code': code})
-        request.data._mutable = False
 
         print(confirmation_code)
         print(code)
 
 
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(confirmation_code=code)
             send_mail_with_code(confirmation_code, email)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -83,21 +82,26 @@ def create_token(request):
         serializer = CreateTokenSerializer(data=request.data)
 
 
-        request_code = hash(request.data.get('confirmation_code'))
+        # request_code = hash(request.data.get('confirmation_code'))
+        request_code = request.data.get('confirmation_code')
 
 
-        user = User.objects.get(username=request.data.get('username'))
+
+        try:
+            user = User.objects.get(username=request.data.get('username'))
+            # user = get_object_or_404(User, username=request.data.get('username'))
+        except exceptions.ObjectDoesNotExist:
+            return Response('failed', status=status.HTTP_400_BAD_REQUEST)
+
         user_code = user.confirmation_code
 
 
-
-        print(request_code)
-        print(user_code)
-
+        print('request_code', request_code)
+        print('user_code', user_code)
 
 
-        # if request_code == user_code:
-        if True:
+        if request_code == user_code:
+        # if True:
             token = get_tokens_for_user(user)
             return Response(token, status=status.HTTP_200_OK)
         else:
