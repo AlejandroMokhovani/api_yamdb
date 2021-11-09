@@ -5,27 +5,23 @@ from django.core.mail import send_mail
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from reviews.models import User
 
 from django.utils.crypto import get_random_string
 
 from django.core import exceptions
 
 
-import random
-
 # for api view
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-
+from reviews.models import User
 from .serializers import (
     CreateUserSerializer,
     CreateUserInBaseSerializer,
     CreateTokenSerializer
 )
-
 from .permissions import IsAdmin
 
 
@@ -49,7 +45,7 @@ def send_mail_with_code(confirmation_code, email):
 @api_view(['POST'])
 def create_user(request):
 
-    """добавить эдакое хэширование кода"""
+    """Добавить эдакое хэширование кода."""
 
     if request.data.get('username') == 'me':
         return Response('oh no! not me!', status=status.HTTP_400_BAD_REQUEST)
@@ -69,6 +65,8 @@ def create_user(request):
 
 @api_view(['POST'])
 def create_token(request):
+
+    """Часть if перенести в сериализаторы."""
 
     serializer = CreateTokenSerializer(data=request.data)
 
