@@ -47,5 +47,6 @@ class CreateUserInBaseSerializer(serializers.ModelSerializer):
 class CreateTokenSerializer(serializers.ModelSerializer):
 
     class Meta:
-        fields = ('token',)
+        fields = ('username', 'confirmation_code')
         model = User
+        read_only_fields = ('username', )

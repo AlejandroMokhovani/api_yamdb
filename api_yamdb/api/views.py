@@ -49,30 +49,23 @@ def send_mail_with_code(confirmation_code, email):
 @api_view(['POST'])
 def create_user(request):
 
-    if request.method == 'POST':
+    """добавить эдакое хэширование кода"""
 
-        serializer = CreateUserInBaseSerializer(data=request.data)
+    if request.data.get('username') == 'me':
+        return Response('oh no! not me!', status=status.HTTP_400_BAD_REQUEST)
 
-        # email = request.data['email']
-        email = request.data.get('email')
+    serializer = CreateUserInBaseSerializer(data=request.data)
+    email = request.data.get('email')
+    confirmation_code = get_random_string(10)
 
+    # code = hash(confirmation_code)
+    code = confirmation_code
 
-        confirmation_code = get_random_string(10)
-
-        # code = hash(confirmation_code)
-        code = confirmation_code
-
-
-        print(confirmation_code)
-        print(code)
-
-
-        if serializer.is_valid():
-            serializer.save(confirmation_code=code)
-            send_mail_with_code(confirmation_code, email)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    if serializer.is_valid():
+        serializer.save(confirmation_code=code)
+        send_mail_with_code(confirmation_code, email)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def create_token(request):
@@ -81,32 +74,47 @@ def create_token(request):
         #
         serializer = CreateTokenSerializer(data=request.data)
 
+        if serializer.is_valid():
 
-        # request_code = hash(request.data.get('confirmation_code'))
-        request_code = request.data.get('confirmation_code')
+            print('valid!!!!')
+            print(request.data)
 
-
-
-        try:
-            user = User.objects.get(username=request.data.get('username'))
-            # user = get_object_or_404(User, username=request.data.get('username'))
-        except exceptions.ObjectDoesNotExist:
-            return Response('failed', status=status.HTTP_400_BAD_REQUEST)
-
-        user_code = user.confirmation_code
+            if request.data.get('username') or request.data == {}:
+                pass
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-        print('request_code', request_code)
-        print('user_code', user_code)
+            # request_code = hash(request.data.get('confirmation_code'))
+            request_code = request.data.get('confirmation_code')
+
+            user = get_object_or_404(User, username=request.data.get('username'))
+
+            print('user', user)
+            # user = User.objects.get(username=request.data.get('username'))
+            # try:
+            #     user = User.objects.get(username=request.data.get('username'))
+            #     # user = get_object_or_404(User, username=request.data.get('username'))
+            # except exceptions:
+            #     return Response('failed', status=status.HTTP_400_BAD_REQUEST)
 
 
-        if request_code == user_code:
-        # if True:
-            token = get_tokens_for_user(user)
-            return Response(token, status=status.HTTP_200_OK)
+
+            user_code = user.confirmation_code
+
+
+            print('request_code', request_code)
+            print('user_code', user_code)
+
+
+            if request_code == user_code:
+            # if True:
+                token = get_tokens_for_user(user)
+                return Response(token, status=status.HTTP_200_OK)
+            else:
+                return Response('failed', status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response('failed', status=status.HTTP_400_BAD_REQUEST)
-
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
