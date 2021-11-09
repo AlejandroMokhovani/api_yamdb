@@ -70,53 +70,31 @@ def create_user(request):
 @api_view(['POST'])
 def create_token(request):
 
-    if request.method == 'POST':
-        #
-        serializer = CreateTokenSerializer(data=request.data)
+    serializer = CreateTokenSerializer(data=request.data)
 
-        if serializer.is_valid():
-
-            print('valid!!!!')
-            print(request.data)
-
-            if request.data.get('username') or request.data == {}:
-                pass
-            else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if serializer.is_valid():
 
 
-            # request_code = hash(request.data.get('confirmation_code'))
-            request_code = request.data.get('confirmation_code')
-
-            user = get_object_or_404(User, username=request.data.get('username'))
-
-            print('user', user)
-            # user = User.objects.get(username=request.data.get('username'))
-            # try:
-            #     user = User.objects.get(username=request.data.get('username'))
-            #     # user = get_object_or_404(User, username=request.data.get('username'))
-            # except exceptions:
-            #     return Response('failed', status=status.HTTP_400_BAD_REQUEST)
-
-
-
-            user_code = user.confirmation_code
-
-
-            print('request_code', request_code)
-            print('user_code', user_code)
-
-
-            if request_code == user_code:
-            # if True:
-                token = get_tokens_for_user(user)
-                return Response(token, status=status.HTTP_200_OK)
-            else:
-                return Response('failed', status=status.HTTP_400_BAD_REQUEST)
+        if request.data.get('username') or request.data == {}:
+            pass
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        # request_code = hash(request.data.get('confirmation_code'))
+        request_code = request.data.get('confirmation_code')
 
+        user = get_object_or_404(User, username=request.data.get('username'))
+
+        user_code = user.confirmation_code
+
+
+        if request_code == user_code:
+            token = get_tokens_for_user(user)
+            return Response(token, status=status.HTTP_200_OK)
+        else:
+            return Response('failed', status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UsersViewSet(viewsets.ModelViewSet):
