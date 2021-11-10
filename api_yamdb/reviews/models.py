@@ -58,6 +58,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -73,6 +74,7 @@ class Genre(models.Model):
     class Meta:
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -84,10 +86,9 @@ class Title(models.Model):
                             verbose_name='Название произведения',
                             help_text='Укажите название произведения')
 
-    year = models.DateField(null=True, blank=True,
-                            validators=[year_validation],
-                            verbose_name='Год выпуска',
-                            help_text='Задайте год выпуска')
+    year = models.PositiveSmallIntegerField(validators=[year_validation],
+                                            verbose_name='Год выпуска',
+                                            help_text='Задайте год выпуска')
 
     description = models.TextField(null=True, blank=True,
                                    verbose_name='Описание')
@@ -107,6 +108,7 @@ class Title(models.Model):
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
