@@ -81,7 +81,7 @@ class Genre(models.Model):
     class Meta:
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
-        ordering = ('name',)
+        ordering = ('slug',)
 
     def __str__(self):
         return self.name
@@ -105,7 +105,7 @@ class Title(models.Model):
     genre = models.ManyToManyField(Genre, verbose_name='Жанр',
                                    related_name='titles', blank=True)
 
-    score_average = models.IntegerField(
+    rating = models.IntegerField(
         verbose_name='Оценка',
         validators=[score_validation],
         default=0,
