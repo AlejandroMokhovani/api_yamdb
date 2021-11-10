@@ -28,6 +28,13 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+    # def is_admin(self):
+    #     return True
+
+    @property
+    def is_admin(self):
+        return self.role == self.ROLE_CHOICES[2][0]
+
     class Meta:
         constraints = [
             # юзер должен быть уникальным
