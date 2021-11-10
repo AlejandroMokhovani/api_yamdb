@@ -6,7 +6,7 @@ from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
 from api.filters import TitleFilter
 from rest_framework.pagination import PageNumberPagination
 # from api.pagination import Pagination
-from api.permissions import IsAdminOrReadOnly
+from api.permissions import IsAdminOrReadOnly, IsAuthenticatedOrReadOnly
 from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, ReviewSerializer,
                              TitleSerializer, TitleCreateSerializer)
@@ -57,11 +57,11 @@ class TitleViewSet(viewsets.ModelViewSet):
             return TitleCreateSerializer
         return TitleSerializer
 
-# view V1
+
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
     
-
     def get_queryset(self):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         new_queryset = title.reviews.all()
@@ -75,6 +75,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
     
     def get_queryset(self):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
