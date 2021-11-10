@@ -108,8 +108,8 @@ class Title(models.Model):
     rating = models.IntegerField(
         verbose_name='Оценка',
         validators=[score_validation],
-        default=0,
-        blank=True
+        null=True,
+        default=None
     )
 
     class Meta:

@@ -1,8 +1,9 @@
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
                                    ListModelMixin)
-
+from api.filters import TitleFilter
 from rest_framework.pagination import PageNumberPagination
 # from api.pagination import Pagination
 from api.permissions import IsAdminOrReadOnly
@@ -46,6 +47,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     pagination_class = PageNumberPagination
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
     ordering_fields = ('name',)
     ordering = ('name',)
 
