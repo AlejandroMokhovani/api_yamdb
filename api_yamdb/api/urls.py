@@ -6,7 +6,7 @@ from .views import UsersViewSet, SingleUserViewSet, create_user, create_token
 router = routers.DefaultRouter()
 
 router.register(r'users', UsersViewSet)
-# router.register('users/me', SingleUserViewSet, basename='me')
+router.register('users/me', SingleUserViewSet, basename='me')
 
 urlpatterns = [
     path('v1/', include(router.urls)),

@@ -24,6 +24,13 @@ class CreateUserSerializer(serializers.ModelSerializer):
             ]
 
 
+class UserMeSerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        model = User
+
+
 class CreateUserInBaseSerializer(serializers.ModelSerializer):
 
 

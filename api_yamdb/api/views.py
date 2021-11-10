@@ -1,4 +1,4 @@
-from rest_framework import viewsets, filters, mixins
+from rest_framework import viewsets, filters, mixins, permissions
 from django.shortcuts import get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
 from django.core.mail import send_mail
@@ -20,7 +20,8 @@ from reviews.models import User
 from .serializers import (
     CreateUserSerializer,
     CreateUserInBaseSerializer,
-    CreateTokenSerializer
+    CreateTokenSerializer,
+    UserMeSerializer
 )
 from .permissions import IsAdmin
 
@@ -104,7 +105,13 @@ class UsersViewSet(viewsets.ModelViewSet):
     # заменяет url-по-id на url-по-username
     lookup_field = 'username'
 
-    permission_classes = (IsAdmin,)
+    permission_classes = (
+        permissions.IsAuthenticated,
+        IsAdmin,
+    )
+
+        # permissions.IsAdminUser
+
     serializer_class = CreateUserSerializer
 
     pagination_class = LimitOffsetPagination
@@ -119,8 +126,10 @@ class SingleUserViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
     # get, patch metods
     # any auth user
 
-    permission_classes = (IsAdmin,)
-    serializer_class = CreateUserSerializer
+    permission_classes = (
+        permissions.IsAuthenticated,
+    )
+    serializer_class = UserMeSerializer
 
     def _get_user(self):
         return get_object_or_404(User, username=self.request.user)
