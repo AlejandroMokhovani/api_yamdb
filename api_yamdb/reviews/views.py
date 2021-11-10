@@ -3,6 +3,8 @@ from rest_framework import filters, viewsets
 from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
                                    ListModelMixin)
 
+from rest_framework.pagination import PageNumberPagination
+# from api.pagination import Pagination
 from api.permissions import IsAdminOrReadOnly
 from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, ReviewSerializer,
@@ -19,6 +21,7 @@ class CustomMixin(ListModelMixin, CreateModelMixin, DestroyModelMixin,
 class CategoryViewSet(CustomMixin):
     """API для категорий."""
     permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = PageNumberPagination
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     filter_backends = (filters.SearchFilter,)
@@ -29,6 +32,7 @@ class CategoryViewSet(CustomMixin):
 class GenreViewSet(CustomMixin):
     """API для жанров."""
     permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = PageNumberPagination
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     filter_backends = (filters.SearchFilter,)
@@ -39,6 +43,7 @@ class GenreViewSet(CustomMixin):
 class TitleViewSet(viewsets.ModelViewSet):
     """API для произведений."""
     permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = PageNumberPagination
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     ordering_fields = ('name',)
