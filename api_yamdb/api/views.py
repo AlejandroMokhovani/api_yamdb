@@ -1,4 +1,4 @@
-from rest_framework import viewsets, filters, mixins
+from rest_framework import viewsets, filters, mixins, permissions
 from django.shortcuts import get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
 from django.core.mail import send_mail
@@ -113,7 +113,8 @@ class UsersViewSet(viewsets.ModelViewSet):
     # заменяет url-по-id на url-по-username
     lookup_field = 'username'
 
-    permission_classes = (IsAdmin,)
+    permission_classes = (permissions.IsAuthenticated, IsAdmin,)
+
     serializer_class = CreateUserSerializer
 
     pagination_class = LimitOffsetPagination
