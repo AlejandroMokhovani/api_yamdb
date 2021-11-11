@@ -1,6 +1,5 @@
+from .models import Category, Comment, Genre, Review, Title, User
 from django.contrib import admin
-
-from .models import Category, Genre, Title, User
 
 
 class CategoryAdmin(admin.ModelAdmin):
@@ -31,7 +30,26 @@ class TitleAdmin(admin.ModelAdmin):
     search_fields = ('name',)
     empty_value_display = '-пусто-'
 
+class CommentAdmin(admin.ModelAdmin):
+    """Страница комментариев в админке"""
+    list_display = ('pk', 'titles', 'author', 'text', 'created')
+    list_display_links = ('pk', 'titles',)
+    list_filter = ('author',)
+    search_fields = ('author',)
+    empty_value_display = '-пусто-'
+
+
+class ReviewAdmin(admin.ModelAdmin):
+    """Страница  в админке"""
+    list_display = ('pk', 'titles', 'score', 'user')
+    list_display_links = ('pk', 'titles',)
+    list_filter = ('user',)
+    search_fields = ('user',)
+    empty_value_display = '-пусто-'
+
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Genre, GenreAdmin)
 admin.site.register(Title, TitleAdmin)
-
+admin.site.register(Comment, CommentAdmin)
+admin.site.register(Review, ReviewAdmin)
