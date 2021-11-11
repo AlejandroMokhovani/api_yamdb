@@ -126,7 +126,7 @@ class Review(models.Model):
         Title, on_delete=models.CASCADE,
         related_name='reviews'
     )
-    score = models.IntegerField(
+    rating = models.IntegerField(
         verbose_name='Оценка',
         validators=[score_validation],
         default=0,
