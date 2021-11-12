@@ -31,6 +31,9 @@ class UserGetMeSerializer(serializers.ModelSerializer):
         fields = ('username', 'email', 'first_name', 'last_name', 'bio',
                   'role')
         model = User
+        read_only_fields = ('username', 'email', 'first_name', 'last_name',
+            'bio', 'role'
+        )
 
 class UserPatchMeSerializer(serializers.ModelSerializer):
 
@@ -39,6 +42,7 @@ class UserPatchMeSerializer(serializers.ModelSerializer):
         fields = ('username', 'email', 'first_name', 'last_name', 'bio',
                   'role')
         model = User
+        read_only_fields = ('role',)
 
 
 class CreateUserInBaseSerializer(serializers.ModelSerializer):

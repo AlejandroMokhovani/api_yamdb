@@ -21,7 +21,8 @@ from .serializers import (
     CreateUserSerializer,
     CreateUserInBaseSerializer,
     CreateTokenSerializer,
-    UserGetMeSerializer
+    UserGetMeSerializer,
+    UserPatchMeSerializer
 )
 from .permissions import IsAdmin
 
@@ -141,34 +142,38 @@ class UsersViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['GET', 'PATCH'])
-# @permission_classes([permissions.AllowAny])
+@permission_classes([permissions.IsAuthenticated])
 def get_or_patch_user(request):
 
-    return Response('done', status=status.HTTP_200_OK)
 
-    # if request.method == 'GET':
-    #     serializer = UserGetMeSerializer(data=request.data)
-    #     user = get_object_or_404(User, username=request.user.username)
-    #
-    #
-    #
-    #     data = {
-    #
-    #         "username": user.username,
-    #         "email": user.email,
-    #         "first_name": user.first_name,
-    #         "last_name": user.last_name,
-    #         "bio": user.bio,
-    #         "role": user.role
-    #
-    #     }
-    #     return Response(data, status=status.HTTP_200_OK)
-    # else:
-    #     return Response(data, status=status.HTTP_200_OK)
+    if request.method == 'GET':
+        # serializer = UserGetMeSerializer(data=request.data)
+        #
+        # if serializer.is_valid():
 
-    # if request.method == 'PATCH':
-    #     serializer = UserPatchMeSerializer(data=request.data)
-    #
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_200_OK)
+        user = get_object_or_404(User, username=request.user.username)
+
+        data = {
+            "username": user.username,
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "bio": user.bio,
+            "role": user.role
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
+
+    if request.method == 'PATCH':
+
+        user = get_object_or_404(User, username=request.user.username)
+
+        serializer = UserPatchMeSerializer(user, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
