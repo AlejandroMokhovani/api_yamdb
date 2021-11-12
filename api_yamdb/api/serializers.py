@@ -76,7 +76,7 @@ class TitleSerializer(serializers.ModelSerializer):
 
     def rating(self):
         scores = Review.objects.filter(title_id=self.initial_data.id)
-        rating = sum(scores.score) / len(scores.score)
+        rating = sum(scores.rating) / len(scores.rating)
         return rating
 
 
