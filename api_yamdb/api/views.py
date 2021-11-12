@@ -21,7 +21,6 @@ from .serializers import (
     CreateUserSerializer,
     CreateUserInBaseSerializer,
     CreateTokenSerializer,
-    UserGetMeSerializer,
     UserPatchMeSerializer
 )
 from .permissions import IsAdmin
@@ -120,39 +119,13 @@ class UsersViewSet(viewsets.ModelViewSet):
     search_fields = ('username',)
 
 
-# class SingleUserViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
-#                         viewsets.GenericViewSet):
-#
-#     """Миксин на получение и редактирование юзера"""
-#     # get, patch metods
-#     # any auth user
-#
-#     permission_classes = (
-#         permissions.IsAuthenticated,
-#         IsAdmin,
-#     )
-#     serializer_class = UserMeSerializer
-#
-#     def _get_user(self):
-#         return get_object_or_404(User, username=self.request.user)
-#
-#     def get_queryset(self):
-#         user = self._get_user()
-#         return User.objects.get(user=user)
-
-
 @api_view(['GET', 'PATCH'])
 @permission_classes([permissions.IsAuthenticated])
 def get_or_patch_user(request):
 
-
     if request.method == 'GET':
-        # serializer = UserGetMeSerializer(data=request.data)
-        #
-        # if serializer.is_valid():
 
         user = get_object_or_404(User, username=request.user.username)
-
         data = {
             "username": user.username,
             "email": user.email,
@@ -163,17 +136,12 @@ def get_or_patch_user(request):
         }
         return Response(data, status=status.HTTP_200_OK)
 
-
     if request.method == 'PATCH':
 
         user = get_object_or_404(User, username=request.user.username)
-
         serializer = UserPatchMeSerializer(user, data=request.data, partial=True)
-
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
