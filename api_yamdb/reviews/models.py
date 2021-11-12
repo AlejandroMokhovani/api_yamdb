@@ -128,7 +128,7 @@ class Review(models.Model):
         default=0,
         blank=True
     )
-    user = models.ForeignKey(
+    author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='reviews',
@@ -136,7 +136,7 @@ class Review(models.Model):
     )
 
     class Meta:
-        unique_together = ('user', 'titles')
+        unique_together = ('author', 'titles')
         verbose_name = 'Оценка'
         verbose_name_plural = 'Оценки'
         ordering = ('titles',)

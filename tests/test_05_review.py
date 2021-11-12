@@ -3,8 +3,8 @@ import pytest
 from .common import (auth_client, create_reviews, create_titles,
                      create_users_api)
 
-
 class Test05ReviewAPI:
+
 
     @pytest.mark.django_db(transaction=True)
     def test_01_review_not_auth(self, client, admin_client):
@@ -21,10 +21,12 @@ class Test05ReviewAPI:
     def create_review(self, client_user, title_id, text, score):
         data = {'text': text, 'score': score}
         response = client_user.post(f'/api/v1/titles/{title_id}/reviews/', data=data)
+        print(response.json())
         assert response.status_code == 201, (
             'Проверьте, что при POST запросе `/api/v1/titles/{title_id}/reviews/` '
             'с правильными данными возвращает статус 201, api доступен для любого аутентифицированного пользователя'
         )
+        print(response.json())
         return response
 
     @pytest.mark.django_db(transaction=True)
@@ -200,7 +202,9 @@ class Test05ReviewAPI:
     @pytest.mark.django_db(transaction=True)
     def test_03_review_detail(self, client, admin_client, admin):
         reviews, titles, user, moderator = create_reviews(admin_client, admin)
+
         response = client.get(f'/api/v1/titles/{titles[0]["id"]}/reviews/{reviews[0]["id"]}/')
+        print(response.json())
         assert response.status_code != 404, (
             'Страница `/api/v1/titles/{title_id}/reviews/{review_id}/` не найдена, проверьте этот адрес в *urls.py*'
         )
