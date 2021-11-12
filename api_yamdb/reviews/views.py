@@ -8,7 +8,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import status
 
-from api.permissions import IsAdminOrReadOnly, IsAuthenticatedOrReadOnly
+from api.permissions import IsAdminOrReadOnly, IsAuthenticatedOrOwnerOrReadOnly
 from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, ReviewSerializer,
                              TitleSerializer, TitleCreateSerializer)
@@ -68,13 +68,13 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrOwnerOrReadOnly]
 
     def get_queryset(self):
-        title = get_object_or_404(
+        titles = get_object_or_404(
             Title,
             id=self.kwargs.get('title_id'))
-        new_queryset = title.reviews.all()
+        new_queryset = titles.reviews.all()
         return new_queryset
 
     def perform_create(self, serializer):
@@ -84,11 +84,11 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrOwnerOrReadOnly]
 
     def get_queryset(self):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        new_queryset = title.comments.all()
+        titles = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        new_queryset = titles.comments.all()
         return new_queryset
 
     def perform_create(self, serializer):

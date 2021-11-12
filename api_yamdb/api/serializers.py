@@ -74,10 +74,10 @@ class TitleSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id',)
 
-    def score_average(self):
+    def rating(self):
         scores = Review.objects.filter(title_id=self.initial_data.id)
-        score_average = sum(scores.score) / len(scores.score)
-        return score_average
+        rating = sum(scores.rating) / len(scores.rating)
+        return rating
 
 
 class TitleCreateSerializer(serializers.ModelSerializer):
@@ -105,14 +105,16 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Comment
+        read_only_fields = ('id',)
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(
+    author = serializers.SlugRelatedField(
         read_only=True, slug_field='username',
         default=serializers.CurrentUserDefault()
     )
 
     class Meta:
-        fields = '__all__'
+        fields = ('id', 'titles', 'rating', 'author',)
         model = Review
+        read_only_fields = ('id',)
