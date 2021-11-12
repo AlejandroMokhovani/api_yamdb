@@ -7,7 +7,9 @@ from rest_framework import routers
 
 from reviews.views import (CategoryViewSet, CommentViewSet, GenreViewSet,
                            ReviewViewSet, TitleViewSet)
-from .views import UsersViewSet, SingleUserViewSet, create_user, create_token
+from .views import (
+    UsersViewSet, create_user, create_token, get_or_patch_user
+)
 
 router = DefaultRouter()
 
@@ -24,8 +26,8 @@ router.register(
 )
 
 urlpatterns = [
+    path('v1/users/me/', get_or_patch_user),
     path('v1/', include(router.urls)),
-  #  path('v1/auth/signup/'),
     path('v1/auth/signup/', create_user),
     path('v1/auth/token/', create_token),
 ]
