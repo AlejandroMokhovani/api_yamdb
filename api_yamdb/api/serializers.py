@@ -11,15 +11,12 @@ class CreateUserSerializer(serializers.ModelSerializer):
         model = User
 
         validators = [
-                UniqueTogetherValidator(
-                    queryset=User.objects.all(),
-                    fields=('email',)
-                ),
-                UniqueTogetherValidator(
-                    queryset=User.objects.all(),
-                    fields=('username',)
-                )
-            ]
+            UniqueTogetherValidator(
+                queryset=User.objects.all(),
+                fields=('email',)),
+            UniqueTogetherValidator(
+                queryset=User.objects.all(),
+                fields=('username',))]
 
 
 class CreateUserInBaseSerializer(serializers.ModelSerializer):
@@ -30,15 +27,12 @@ class CreateUserInBaseSerializer(serializers.ModelSerializer):
         read_only_fields = ('confirmation_code',)
 
         validators = [
-                UniqueTogetherValidator(
-                    queryset=User.objects.all(),
-                    fields=('email',)
-                ),
-                UniqueTogetherValidator(
-                    queryset=User.objects.all(),
-                    fields=('username',)
-                )
-            ]
+            UniqueTogetherValidator(
+                queryset=User.objects.all(),
+                fields=('email',)),
+            UniqueTogetherValidator(
+                queryset=User.objects.all(),
+                fields=('username',))]
 
 
 class CreateTokenSerializer(serializers.ModelSerializer):
@@ -71,7 +65,6 @@ class GenreSerializer(serializers.ModelSerializer):
         lookup_field = 'slug'
 
 
-
 class TitleSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
     genre = GenreSerializer(many=True, read_only=True)
@@ -85,8 +78,6 @@ class TitleSerializer(serializers.ModelSerializer):
         scores = Review.objects.filter(title_id=self.initial_data.id)
         score_average = sum(scores.score) / len(scores.score)
         return score_average
-
-
 
 
 class TitleCreateSerializer(serializers.ModelSerializer):

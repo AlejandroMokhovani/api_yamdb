@@ -1,10 +1,5 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import (TokenObtainPairView,
-                                            TokenRefreshView)
-
-from rest_framework import routers
-
 from reviews.views import (CategoryViewSet, CommentViewSet, GenreViewSet,
                            ReviewViewSet, TitleViewSet)
 from .views import (
@@ -17,7 +12,6 @@ router.register(r'users', UsersViewSet)
 router.register('categories', CategoryViewSet, basename='categories')
 router.register('genres', GenreViewSet, basename='genres')
 router.register('titles', TitleViewSet, basename='titles')
-# + urls comments, reviews
 router.register(r'titles/(?P<title_id>\d+)/reviews',
                 ReviewViewSet, basename='ReViewSet')
 router.register(

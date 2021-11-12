@@ -28,25 +28,20 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-    # def is_admin(self):
-    #     return True
-
     @property
     def is_admin(self):
         return self.role == self.ROLE_CHOICES[2][0]
 
     class Meta:
         constraints = [
-            # юзер должен быть уникальным
             models.UniqueConstraint(
-                fields=['username',],
+                fields=['username', ],
                 name='unique_username'
             ),
             models.UniqueConstraint(
-                fields=['email',],
+                fields=['email', ],
                 name='unique_email'
             ),
-            # username юзера не должен быть 'me'
             models.CheckConstraint(
                 check=~Q(username__iexact='me'),
                 name='cant_given_username'
@@ -140,6 +135,9 @@ class Review(models.Model):
 
     class Meta:
         unique_together = ('user', 'titles')
+        verbose_name = 'Оценка'
+        verbose_name_plural = 'Оценки'
+        ordering = ('titles',)
 
 
 class Comment(models.Model):
@@ -161,3 +159,8 @@ class Comment(models.Model):
     created = models.DateTimeField(
         auto_now_add=True
     )
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+        ordering = ('titles',)

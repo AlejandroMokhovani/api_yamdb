@@ -1,4 +1,4 @@
-from .models import Category, Comment, Genre, Review, Title, User
+from .models import Category, Comment, Genre, Review, Title
 from django.contrib import admin
 
 
@@ -29,6 +29,7 @@ class TitleAdmin(admin.ModelAdmin):
     list_filter = ('name',)
     search_fields = ('name',)
     empty_value_display = '-пусто-'
+
 
 class CommentAdmin(admin.ModelAdmin):
     """Страница комментариев в админке"""
