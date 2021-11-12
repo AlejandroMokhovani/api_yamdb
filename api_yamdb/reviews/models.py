@@ -119,7 +119,8 @@ class Title(models.Model):
 class Review(models.Model):
     titles = models.ForeignKey(
         Title, on_delete=models.CASCADE,
-        related_name='reviews'
+        related_name='reviews',
+        verbose_name='произведения',
     )
     rating = models.IntegerField(
         verbose_name='Оценка',
@@ -130,7 +131,8 @@ class Review(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='reviews'
+        related_name='reviews',
+        verbose_name='пользователь'
     )
 
     class Meta:
@@ -144,13 +146,14 @@ class Comment(models.Model):
     titles = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
-        related_name='comments'
+        related_name='comments',
+        verbose_name='произведения',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор',
-        related_name='comments'
+        related_name='comments',
     )
     text = models.TextField(
         help_text='Введите текст коментария',

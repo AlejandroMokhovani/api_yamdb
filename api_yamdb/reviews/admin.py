@@ -42,7 +42,7 @@ class CommentAdmin(admin.ModelAdmin):
 
 class ReviewAdmin(admin.ModelAdmin):
     """Страница  в админке"""
-    list_display = ('pk', 'titles', 'score', 'user')
+    list_display = ('pk', 'titles', 'rating', 'user')
     list_display_links = ('pk', 'titles',)
     list_filter = ('user',)
     search_fields = ('user',)
