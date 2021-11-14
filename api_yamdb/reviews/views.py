@@ -18,7 +18,7 @@ from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, ReviewSerializer,
                              TitleSerializer, TitleCreateSerializer)
 
-from .models import Category, Genre, Title
+from .models import Category, Genre, Title, Review, Comment
 
 
 class CustomMixin(ListModelMixin, CreateModelMixin, DestroyModelMixin,
@@ -83,7 +83,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         # GET and GET LIST
         elif self.action == 'list' or  self.action == 'retrieve':
             return (permissions.AllowAny(),)
-            
+
         # UPDATE or DELETE
         elif self.action == 'update' or self.action == 'partial_update' or self.action == 'destroy':
             return (permissions.IsAuthenticated(), IsAuthorOrModerOrAdmin(),)
@@ -122,9 +122,12 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
-        new_queryset = titles.comments.all()
+        # comment = get_object_or_404(review, id=self.kwargs.get('comment_id'))
+        new_queryset = review.comments.all()
         return new_queryset
 
     def perform_create(self, serializer):
-        get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        serializer.save(author=self.request.user)
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        review = title.reviews.get(id=self.kwargs.get('review_id'))
+        # comment = get_object_or_404(Comment, id=self.kwargs.get('comment_id'))
+        serializer.save(author=self.request.user, reviews=review)
