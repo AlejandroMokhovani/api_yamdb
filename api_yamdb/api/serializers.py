@@ -6,7 +6,6 @@ from django.db.models import Avg
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
-
     class Meta:
         fields = (
             'username', 'email', 'first_name', 'last_name', 'bio', 'role'
@@ -23,7 +22,6 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
 
 class CreateUserInBaseSerializer(serializers.ModelSerializer):
-
     class Meta:
         fields = ('username', 'email')
         model = User
@@ -39,7 +37,6 @@ class CreateUserInBaseSerializer(serializers.ModelSerializer):
 
 
 class CreateTokenSerializer(serializers.ModelSerializer):
-
     class Meta:
         fields = ('username', 'confirmation_code')
         model = User
@@ -47,7 +44,6 @@ class CreateTokenSerializer(serializers.ModelSerializer):
 
 
 class UserPatchMeSerializer(serializers.ModelSerializer):
-
     class Meta:
         fields = ('username', 'email', 'first_name', 'last_name', 'bio',
                   'role')
@@ -56,14 +52,12 @@ class UserPatchMeSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Category
         fields = ('name', 'slug')
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = Genre
         fields = ('name', 'slug')
