@@ -161,7 +161,7 @@ class Comment(models.Model):
 
     id = models.BigAutoField(primary_key=True)
 
-    text = models.TextField('text', blank=True)
+    text = models.TextField('text')
 
     author = models.ForeignKey(
         User,

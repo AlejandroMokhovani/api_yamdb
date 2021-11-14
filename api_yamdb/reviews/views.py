@@ -125,10 +125,12 @@ class CommentViewSet(viewsets.ModelViewSet):
             return (permissions.IsAuthenticated(), IsAuthorOrModerOrAdmin(),)
 
     def get_queryset(self):
-        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        review = title.reviews.get(id=self.kwargs.get('review_id'))
         new_queryset = review.comments.all()
         return new_queryset
 
     def perform_create(self, serializer):
-        get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        serializer.save(author=self.request.user)
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        review = title.reviews.get(id=self.kwargs.get('review_id'))
+        serializer.save(author=self.request.user, reviews=review)
