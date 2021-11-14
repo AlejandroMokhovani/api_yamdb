@@ -78,22 +78,25 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
         # POST
         if self.action == 'create':
-            return (permissions.IsAuthenticated(),)
+            permission_classes = [permissions.IsAuthenticated]
+            # return (permissions.IsAuthenticated(),)
 
         # GET and GET LIST
         elif self.action == 'list' or  self.action == 'retrieve':
-            return (permissions.AllowAny(),)
+            permission_classes = [permissions.AllowAny]
+            # return (permissions.AllowAny(),)
 
         # UPDATE or DELETE
         elif self.action == 'update' or self.action == 'partial_update' or self.action == 'destroy':
-            return (permissions.IsAuthenticated(), IsAuthorOrModerOrAdmin(),)
+            permission_classes = [permissions.IsAuthenticated, IsAuthorOrModerOrAdmin]
+            # return (permissions.IsAuthenticated(), IsAuthorOrModerOrAdmin(),)
+        else:
+            permission_classes = [permissions.AllowAny]
+        return [permission() for permission in permission_classes]
 
     def get_queryset(self):
 
-        title = get_object_or_404(
-            Title,
-            id=self.kwargs.get('title_id')
-        )
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         # new_queryset = Review.objects.filter(title=title)
         new_queryset = title.reviews.all()
         return new_queryset

@@ -153,6 +153,7 @@ class Review(models.Model):
     class Meta:
         #####
         unique_together = ('author', 'title')
+        ordering = ('id',)
 
 
 
@@ -186,3 +187,4 @@ class Comment(models.Model):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
+        ordering = ('id',)
