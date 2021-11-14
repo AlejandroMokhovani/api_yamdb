@@ -77,27 +77,31 @@ class ReviewViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
 
         # POST
-        if self.action == 'create':
+        if self.action in ('create',):
             permission_classes = [permissions.IsAuthenticated]
-            # return (permissions.IsAuthenticated(),)
 
         # GET and GET LIST
-        elif self.action == 'list' or  self.action == 'retrieve':
+        elif self.action in ('list', 'retrieve',):
             permission_classes = [permissions.AllowAny]
-            # return (permissions.AllowAny(),)
 
         # UPDATE or DELETE
-        elif self.action == 'update' or self.action == 'partial_update' or self.action == 'destroy':
-            permission_classes = [permissions.IsAuthenticated, IsAuthorOrModerOrAdmin]
-            # return (permissions.IsAuthenticated(), IsAuthorOrModerOrAdmin(),)
+        elif self.action in ('update', 'partial_update', 'destroy',):
+            permission_classes = [
+                permissions.IsAuthenticated,
+                IsAuthorOrModerOrAdmin
+            ]
+
+        # PUT очевидно D:
         else:
-            permission_classes = [permissions.AllowAny]
+            permission_classes = [
+                permissions.IsAuthenticated,
+                IsAuthorOrModerOrAdmin
+            ]
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
 
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        # new_queryset = Review.objects.filter(title=title)
         new_queryset = title.reviews.all()
         return new_queryset
 
@@ -115,16 +119,21 @@ class CommentViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
 
         # POST
-        if self.action == 'create':
-            return (permissions.IsAuthenticated(),)
+        if self.action in ('create',):
+            permission_classes = [permissions.IsAuthenticated]
 
         # GET and GET LIST
-        elif self.action == 'list' or  self.action == 'retrieve':
-            return (permissions.AllowAny(),)
+        elif self.action in ('list', 'retrieve',):
+            permission_classes = [permissions.AllowAny]
 
         # UPDATE or DELETE
-        elif self.action == 'update' or self.action == 'partial_update' or self.action == 'destroy':
-            return (permissions.IsAuthenticated(), IsAuthorOrModerOrAdmin(),)
+        elif self.action in ('update', 'partial_update', 'destroy',):
+            permission_classes = [
+                permissions.IsAuthenticated,
+                IsAuthorOrModerOrAdmin
+            ]
+
+        return [permission() for permission in permission_classes]
 
     def get_queryset(self):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))

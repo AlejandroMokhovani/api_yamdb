@@ -118,66 +118,53 @@ class Title(models.Model):
 
 class Review(models.Model):
     id = models.BigAutoField(primary_key=True)
-
     text = models.TextField(
         'text',
         validators=[text_validation],
     )
-
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='reviews_author',
         verbose_name='пользователь'
     )
-
     title = models.ForeignKey(
         Title, on_delete=models.CASCADE,
         related_name='reviews',
         verbose_name='произведения',
     )
-
     score = models.IntegerField(
         verbose_name='Оценка',
         validators=[score_validation],
         default=0,
     )
-
     pub_date = models.DateTimeField(
         'Дата добавления',
         auto_now_add=True,
         db_index=True
     )
 
-
     class Meta:
-        #####
         unique_together = ('author', 'title')
         ordering = ('id',)
-
-
 
 
 class Comment(models.Model):
 
     id = models.BigAutoField(primary_key=True)
-
     text = models.TextField('text')
-
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор',
         related_name='comments',
     )
-
     reviews = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
         verbose_name='произведения',
         related_name='comments',
     )
-
     pub_date = models.DateTimeField(
         'Дата добавления',
         auto_now_add=True,
