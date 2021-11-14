@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, viewsets
+from rest_framework import filters, viewsets, permissions
 from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
                                    ListModelMixin)
 from api.filters import TitleFilter
@@ -8,7 +8,12 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import status
 
-from api.permissions import IsAdminOrReadOnly, IsAuthenticatedOrOwnerOrReadOnly
+from api.permissions import (
+    IsAdminOrReadOnly,
+    IsAuthenticatedOrOwnerOrReadOnly,
+    IsAuthorOrModerOrAdmin
+)
+
 from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, ReviewSerializer,
                              TitleSerializer, TitleCreateSerializer)
@@ -68,26 +73,55 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticatedOrOwnerOrReadOnly]
+
+    def get_permissions(self):
+
+        # POST
+        if self.action == 'create':
+            return (permissions.IsAuthenticated(),)
+
+        # GET and GET LIST
+        elif self.action == 'list' or  self.action == 'retrieve':
+            return (permissions.AllowAny(),)
+            
+        # UPDATE or DELETE
+        elif self.action == 'update' or self.action == 'partial_update' or self.action == 'destroy':
+            return (permissions.IsAuthenticated(), IsAuthorOrModerOrAdmin(),)
 
     def get_queryset(self):
+
         titles = get_object_or_404(
             Title,
-            id=self.kwargs.get('title_id'))
+            id=self.kwargs.get('title_id')
+        )
+
         new_queryset = titles.reviews.all()
         return new_queryset
 
     def perform_create(self, serializer):
-        get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        serializer.save(user=self.request.user)
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        serializer.save(author=self.request.user, titles=title)
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = [IsAuthenticatedOrOwnerOrReadOnly]
+
+    def get_permissions(self):
+
+        # POST
+        if self.action == 'create':
+            return (permissions.IsAuthenticated(),)
+
+        # GET and GET LIST
+        elif self.action == 'list' or  self.action == 'retrieve':
+            return (permissions.AllowAny(),)
+
+        # UPDATE or DELETE
+        elif self.action == 'update' or self.action == 'partial_update' or self.action == 'destroy':
+            return (permissions.IsAuthenticated(), IsAuthorOrModerOrAdmin(),)
 
     def get_queryset(self):
-        titles = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
         new_queryset = titles.comments.all()
         return new_queryset
 

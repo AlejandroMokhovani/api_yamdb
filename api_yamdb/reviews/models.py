@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q
 
-from .validators import score_validation, year_validation
+from .validators import score_validation, year_validation, text_validation
 
 
 class User(AbstractUser):
@@ -117,17 +117,13 @@ class Title(models.Model):
 
 
 class Review(models.Model):
-    titles = models.ForeignKey(
-        Title, on_delete=models.CASCADE,
-        related_name='reviews',
-        verbose_name='произведения',
+    id = models.BigAutoField(primary_key=True)
+
+    text = models.TextField(
+        'text',
+        validators=[text_validation],
     )
-    rating = models.IntegerField(
-        verbose_name='Оценка',
-        validators=[score_validation],
-        default=0,
-        blank=True
-    )
+
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -135,35 +131,58 @@ class Review(models.Model):
         verbose_name='пользователь'
     )
 
+    titles = models.ForeignKey(
+        Title, on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name='произведения',
+    )
+
+    score = models.IntegerField(
+        verbose_name='Оценка',
+        validators=[score_validation],
+        default=0,
+    )
+
+    pub_date = models.DateTimeField(
+        'Дата добавления',
+        auto_now_add=True,
+        db_index=True
+    )
+
+
     class Meta:
+        #####
         unique_together = ('author', 'titles')
-        verbose_name = 'Оценка'
-        verbose_name_plural = 'Оценки'
-        ordering = ('titles',)
+
+
 
 
 class Comment(models.Model):
-    titles = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        related_name='comments',
-        verbose_name='произведения',
-    )
+
+    id = models.BigAutoField(primary_key=True)
+
+    text = models.TextField('text', blank=True)
+
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор',
         related_name='comments',
     )
-    text = models.TextField(
-        help_text='Введите текст коментария',
-        verbose_name='Текст коментария',
+
+    reviews = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        verbose_name='произведения',
+        related_name='comments',
     )
-    created = models.DateTimeField(
-        auto_now_add=True
+
+    pub_date = models.DateTimeField(
+        'Дата добавления',
+        auto_now_add=True,
+        db_index=True
     )
 
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
-        ordering = ('titles',)

@@ -12,5 +12,9 @@ def year_validation(year_value):
 
 
 def score_validation(value):
-    if not value >= 0 and value <= 10:
+    if not (1 <= value <= 10):
         raise ValidationError('incorrect Score')
+
+def text_validation(value):
+    if value == '':
+        raise ValidationError('incorrect text')
