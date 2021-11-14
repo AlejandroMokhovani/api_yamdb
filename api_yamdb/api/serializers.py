@@ -6,9 +6,11 @@ from django.db.models import Avg
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
+
     class Meta:
-        fields = ('username', 'email', 'first_name', 'last_name', 'bio',
-                  'role')
+        fields = (
+            'username', 'email', 'first_name', 'last_name', 'bio', 'role'
+        )
         model = User
 
         validators = [
@@ -54,12 +56,14 @@ class UserPatchMeSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Category
         fields = ('name', 'slug')
 
 
 class GenreSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = Genre
         fields = ('name', 'slug')
@@ -110,7 +114,8 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Review
-        read_only_fields = ('id', 'titles', 'author')
+        read_only_fields = ('id', 'title', 'author', 'pub_date')
+
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(

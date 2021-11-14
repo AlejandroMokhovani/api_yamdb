@@ -86,16 +86,6 @@ def create_token(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UsersViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    lookup_field = 'username'
-    permission_classes = (permissions.IsAuthenticated, IsAdmin,)
-    serializer_class = CreateUserSerializer
-    pagination_class = LimitOffsetPagination
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('username',)
-
-
 @api_view(['GET', 'PATCH'])
 @permission_classes([permissions.IsAuthenticated])
 def get_or_patch_user(request):
@@ -124,3 +114,13 @@ def get_or_patch_user(request):
         else:
             return Response(serializer.errors,
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+class UsersViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    lookup_field = 'username'
+    permission_classes = (permissions.IsAuthenticated, IsAdmin,)
+    serializer_class = CreateUserSerializer
+    pagination_class = LimitOffsetPagination
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username',)
