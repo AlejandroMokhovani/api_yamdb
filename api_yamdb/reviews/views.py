@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, viewsets, permissions
+from rest_framework import filters, viewsets, permissions, serializers
 from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
                                    ListModelMixin)
 from api.filters import TitleFilter
@@ -13,7 +13,7 @@ from api.permissions import (
     IsAuthenticatedOrOwnerOrReadOnly,
     IsAuthorOrModerOrAdmin
 )
-
+from django.db import IntegrityError
 from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, ReviewSerializer,
                              TitleSerializer, TitleCreateSerializer)
@@ -99,8 +99,11 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return new_queryset
 
     def perform_create(self, serializer):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        serializer.save(author=self.request.user, titles=title)
+        titles = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        try:
+            serializer.save(author=self.request.user, titles=titles)
+        except IntegrityError:
+            raise serializers.ValidationError('Some message.')
 
 
 class CommentViewSet(viewsets.ModelViewSet):

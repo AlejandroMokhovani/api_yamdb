@@ -103,13 +103,13 @@ class ReviewSerializer(serializers.ModelSerializer):
         default=serializers.CurrentUserDefault()
     )
 
-    def validate_author(self, author):
-
-        user = Review.objects.get(author=self.context['request'].author)
-
-        if user:
-            return serializers.ValidationError('u have a review already')
-        return self.context['request'].author
+    # def validate_author(self, value):
+    #
+    #     user = Review.objects.get(author=self.context['request'].author)
+    #
+    #     if user:
+    #         return serializers.ValidationError('u have a review already')
+    #     return value
 
 
     class Meta:
