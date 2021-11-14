@@ -113,8 +113,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only=True, slug_field='username',
         default=serializers.CurrentUserDefault()
     )
-
     class Meta:
-        fields = ('id', 'titles', 'rating', 'author',)
+        fields = ('score', 'author')
         model = Review
         read_only_fields = ('id',)

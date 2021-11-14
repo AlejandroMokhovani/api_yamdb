@@ -71,14 +71,14 @@ class ReviewViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrOwnerOrReadOnly]
 
     def get_queryset(self):
-        titles = get_object_or_404(
+        title = get_object_or_404(
             Title,
-            id=self.kwargs.get('title_id'))
-        new_queryset = titles.reviews.all()
+            id=self.kwargs.get('id'))
+        new_queryset = title.reviews.all()
         return new_queryset
 
     def perform_create(self, serializer):
-        get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        get_object_or_404(Title, id=self.kwargs.get('id'))
         serializer.save(user=self.request.user)
 
 
@@ -87,10 +87,10 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrOwnerOrReadOnly]
 
     def get_queryset(self):
-        titles = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        new_queryset = titles.comments.all()
+        title = get_object_or_404(Title, id=self.kwargs.get('id'))
+        new_queryset = title.comments.all()
         return new_queryset
 
     def perform_create(self, serializer):
-        get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        get_object_or_404(Title, id=self.kwargs.get('id'))
         serializer.save(author=self.request.user)
