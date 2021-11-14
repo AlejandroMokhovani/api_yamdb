@@ -96,7 +96,27 @@ class TitleCreateSerializer(serializers.ModelSerializer):
         model = Title
 
 
-# Сериализаторы V1
+class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field='username',
+        default=serializers.CurrentUserDefault()
+    )
+
+    def validate_author(self, author):
+
+        user = Review.objects.get(author=self.context['request'].author)
+
+        if user:
+            return serializers.ValidationError('u have a review already')
+        return self.context['request'].author
+
+
+    class Meta:
+        fields = '__all__'
+        model = Review
+        read_only_fields = ('id', 'titles', 'author')
+
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
@@ -105,16 +125,3 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Comment
-        read_only_fields = ('id',)
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
-        read_only=True, slug_field='username',
-        default=serializers.CurrentUserDefault()
-    )
-
-    class Meta:
-        fields = ('id', 'titles', 'rating', 'author',)
-        model = Review
-        read_only_fields = ('id',)
