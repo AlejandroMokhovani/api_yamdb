@@ -127,7 +127,7 @@ class Review(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='reviews',
+        related_name='reviews_author',
         verbose_name='пользователь'
     )
 
@@ -161,7 +161,7 @@ class Comment(models.Model):
 
     id = models.BigAutoField(primary_key=True)
 
-    text = models.TextField('text', blank=True)
+    text = models.TextField('text')
 
     author = models.ForeignKey(
         User,
