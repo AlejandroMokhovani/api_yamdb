@@ -131,7 +131,7 @@ class Review(models.Model):
         verbose_name='пользователь'
     )
 
-    titles = models.ForeignKey(
+    title = models.ForeignKey(
         Title, on_delete=models.CASCADE,
         related_name='reviews',
         verbose_name='произведения',
@@ -152,7 +152,7 @@ class Review(models.Model):
 
     class Meta:
         #####
-        unique_together = ('author', 'titles')
+        unique_together = ('author', 'title')
 
 
 

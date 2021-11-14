@@ -90,18 +90,18 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
 
-        titles = get_object_or_404(
+        title = get_object_or_404(
             Title,
             id=self.kwargs.get('title_id')
         )
 
-        new_queryset = titles.reviews.all()
+        new_queryset = title.reviews.all()
         return new_queryset
 
     def perform_create(self, serializer):
-        titles = get_object_or_404(Title, id=self.kwargs.get('title_id'))
+        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         try:
-            serializer.save(author=self.request.user, titles=titles)
+            serializer.save(author=self.request.user, title=title)
         except IntegrityError:
             raise serializers.ValidationError('Some message.')
 
@@ -133,4 +133,4 @@ class CommentViewSet(viewsets.ModelViewSet):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         review = title.reviews.get(id=self.kwargs.get('review_id'))
         # comment = get_object_or_404(Comment, id=self.kwargs.get('comment_id'))
-        serializer.save(author=self.request.user, reviews=review)
+        serializer.save(author=self.request.user, reviews=review, titles=title)
