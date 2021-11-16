@@ -12,9 +12,9 @@ class User(AbstractUser):
     MODERATOR = 'moderator'
     ADMIN = 'admin'
     ROLE_CHOICES = [
-        (USER, 'user'),
-        (MODERATOR, 'moderator'),
-        (ADMIN, 'admin'),
+        (USER, USER),
+        (MODERATOR, MODERATOR),
+        (ADMIN, ADMIN),
     ]
     role = models.CharField(
         'role',
@@ -24,13 +24,6 @@ class User(AbstractUser):
     )
     bio = models.TextField('biography', blank=True)
     confirmation_code = models.CharField(max_length=254)
-
-    def __str__(self):
-        return self.username
-
-    @property
-    def is_admin(self):
-        return self.role == self.ROLE_CHOICES[2][0]
 
     class Meta:
         constraints = [
@@ -47,6 +40,13 @@ class User(AbstractUser):
                 name='cant_given_username'
             ),
         ]
+
+    def __str__(self):
+        return self.username
+
+    @property
+    def is_admin(self):
+        return self.role == self.ROLE_CHOICES[2][0]
 
 
 class Category(models.Model):
@@ -92,7 +92,6 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    id = models.AutoField(primary_key=True, editable=False)
     name = models.CharField(
         max_length=256, db_index=True,
         verbose_name='Название произведения',
@@ -132,7 +131,6 @@ class Title(models.Model):
 
 
 class Review(models.Model):
-    id = models.BigAutoField(primary_key=True)
     text = models.TextField(
         'text',
         validators=[text_validation],
@@ -148,7 +146,7 @@ class Review(models.Model):
         related_name='reviews',
         verbose_name='произведения',
     )
-    score = models.IntegerField(
+    score = models.PositiveSmallIntegerField(
         verbose_name='Оценка',
         validators=[score_validation],
         default=0,
@@ -160,12 +158,15 @@ class Review(models.Model):
     )
 
     class Meta:
-        unique_together = ('author', 'title')
+        constraints = (
+            models.UniqueConstraint(
+                fields=('author', 'title',),
+                name='unique_subscribers'),
+        )
         ordering = ('id',)
 
 
 class Comment(models.Model):
-    id = models.BigAutoField(primary_key=True)
     text = models.TextField('text')
     author = models.ForeignKey(
         User,

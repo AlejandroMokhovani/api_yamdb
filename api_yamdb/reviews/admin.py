@@ -43,7 +43,7 @@ class CommentAdmin(admin.ModelAdmin):
 class ReviewAdmin(admin.ModelAdmin):
     """Страница  в админке"""
     list_display = ('pk', 'title', 'score', 'author', 'text')
-    list_display_links = ('pk', 'titles',)
+    list_display_links = ('pk', 'title',)
     list_filter = ('author',)
     search_fields = ('author',)
     empty_value_display = '-пусто-'
