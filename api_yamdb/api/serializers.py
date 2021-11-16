@@ -1,7 +1,8 @@
 from rest_framework import serializers
+from rest_framework import validators
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
-from rest_framework.validators import UniqueTogetherValidator
+from rest_framework.validators import UniqueTogetherValidator, UniqueForYearValidator
 from django.db.models import Avg
 
 
@@ -73,6 +74,11 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
         fields = '__all__'
         read_only_fields = ('id',)
+        validators = UniqueForYearValidator(
+            queryset=Title.objects.all(),
+            field='slug',
+            date_field='published'
+            )
 
     def get_rating(self, obj):
         try:
