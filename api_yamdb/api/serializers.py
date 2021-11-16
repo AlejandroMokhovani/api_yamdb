@@ -74,11 +74,11 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
         fields = '__all__'
         read_only_fields = ('id',)
-        validators = UniqueForYearValidator(
-            queryset=Title.objects.all(),
-            field='slug',
-            date_field='published'
-            )
+        validators = UniqueForYearValidator(queryset=Title.objects.all(),
+                                            field='pk',
+                                            date_field='published',
+                                            message='Неверно указан год'
+                    )
 
     def get_rating(self, obj):
         try:

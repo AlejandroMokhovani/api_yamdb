@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q
 
-from .validators import score_validation, year_validation, text_validation
+from .validators import score_validation, text_validation
 
 
 class User(AbstractUser):
@@ -98,7 +98,6 @@ class Title(models.Model):
         help_text='Укажите название произведения'
     )
     year = models.PositiveSmallIntegerField(
-        validators=[year_validation],
         verbose_name='Год выпуска',
         help_text='Задайте год выпуска'
     )
