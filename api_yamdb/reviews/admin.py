@@ -1,7 +1,7 @@
 # from .models import Category, Comment, Genre, Review, Title
 # from django.contrib import admin
-
-
+#
+#
 # class CategoryAdmin(admin.ModelAdmin):
 #     """Страница категорий в админке."""
 #     list_display = ('pk', 'name', 'slug')

@@ -10,7 +10,6 @@ from rest_framework import status
 
 from api.permissions import (
     IsAdminOrReadOnly,
-    IsAuthenticatedOrOwnerOrReadOnly,
     IsAuthorOrModerOrAdmin
 )
 from django.db import IntegrityError

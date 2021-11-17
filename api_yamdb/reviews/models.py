@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q
 
+from rest_framework.validators import UniqueTogetherValidator, UniqueValidator
 from .validators import score_validation, year_validation, text_validation
 
 
@@ -12,9 +13,9 @@ class User(AbstractUser):
     MODERATOR = 'moderator'
     ADMIN = 'admin'
     ROLE_CHOICES = [
-        (USER, 'user'),
-        (MODERATOR, 'moderator'),
-        (ADMIN, 'admin'),
+        (USER, USER),
+        (MODERATOR, MODERATOR),
+        (ADMIN, ADMIN),
     ]
     role = models.CharField(
         'role',
@@ -30,7 +31,11 @@ class User(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == self.ROLE_CHOICES[2][0]
+        return self.role == self.ADMIN
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR
 
     class Meta:
         constraints = [

@@ -9,6 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils.crypto import get_random_string
 
 from django.core import exceptions
+from api_yamdb.settings import EMAIL_FROM
 
 
 # for api view
@@ -20,8 +21,7 @@ from reviews.models import User
 from .serializers import (
     CreateUserSerializer,
     CreateUserInBaseSerializer,
-    CreateTokenSerializer,
-    UserPatchMeSerializer
+    CreateTokenSerializer
 )
 from .permissions import IsAdmin
 
@@ -36,9 +36,9 @@ def get_tokens_for_user(user):
 def send_mail_with_code(confirmation_code, email):
     send_mail(
         'Код регистрации',
-        f'{confirmation_code}',
-        'api_yamdb@mail.com',
-        [f'{email}'],
+        confirmation_code,
+        EMAIL_FROM,
+        [email],
         fail_silently=False,
     )
 
@@ -58,42 +58,34 @@ def create_user(request):
     # code = hash(confirmation_code)
     code = confirmation_code
 
-    if serializer.is_valid():
-        serializer.save(confirmation_code=code)
-        send_mail_with_code(confirmation_code, email)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    serializer.is_valid(raise_exception=True)
+    serializer.save(confirmation_code=code)
+    send_mail_with_code(confirmation_code, email)
+    return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def create_token(request):
 
-    """Часть if перенести в сериализаторы."""
-
     serializer = CreateTokenSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
 
-    if serializer.is_valid():
+    if not (request.data.get('username') or request.data == {}):
+        return Response(
+            serializer.errors, status=status.HTTP_400_BAD_REQUEST
+        )
 
+    request_code = request.data.get('confirmation_code')
+    user = get_object_or_404(User, username=request.data.get('username'))
+    user_code = user.confirmation_code
 
-        if request.data.get('username') or request.data == {}:
-            pass
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    if request_code != user_code:
+        return Response(
+            'confirmation code not valid', status=status.HTTP_400_BAD_REQUEST
+        )
 
-        # request_code = hash(request.data.get('confirmation_code'))
-        request_code = request.data.get('confirmation_code')
-
-        user = get_object_or_404(User, username=request.data.get('username'))
-
-        user_code = user.confirmation_code
-
-
-        if request_code == user_code:
-            token = get_tokens_for_user(user)
-            return Response(token, status=status.HTTP_200_OK)
-        else:
-            return Response('failed', status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    token = get_tokens_for_user(user)
+    return Response(token, status=status.HTTP_200_OK)
 
 
 class UsersViewSet(viewsets.ModelViewSet):
@@ -101,19 +93,13 @@ class UsersViewSet(viewsets.ModelViewSet):
     # get, post, get single, patch, delete
 
     queryset = User.objects.all()
-
-    # заменяет url-по-id на url-по-username
     lookup_field = 'username'
 
     permission_classes = (
         permissions.IsAuthenticated,
         IsAdmin,
     )
-
-        # permissions.IsAdminUser
-
     serializer_class = CreateUserSerializer
-
     pagination_class = LimitOffsetPagination
     filter_backends = (filters.SearchFilter,)
     search_fields = ('username',)
@@ -124,24 +110,19 @@ class UsersViewSet(viewsets.ModelViewSet):
 def get_or_patch_user(request):
 
     if request.method == 'GET':
+        # Я так понимаю, что если есть запрос от юзера на /me
+        # то этот юзер есть в базе, раз запрос проходит через
+        # permissions.IsAuthenticated
 
-        user = get_object_or_404(User, username=request.user.username)
-        data = {
-            "username": user.username,
-            "email": user.email,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "bio": user.bio,
-            "role": user.role
-        }
-        return Response(data, status=status.HTTP_200_OK)
+        serializer = CreateUserSerializer(request.user)
+        return Response(serializer.data)
 
     if request.method == 'PATCH':
+        # См. выше
 
-        user = get_object_or_404(User, username=request.user.username)
-        serializer = UserPatchMeSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = CreateUserSerializer(
+            request.user, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
