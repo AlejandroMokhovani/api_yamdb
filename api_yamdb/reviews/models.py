@@ -6,7 +6,6 @@ from .validators import score_validation, text_validation
 
 
 class User(AbstractUser):
-    id = models.BigAutoField(primary_key=True)
     email = models.EmailField('email', max_length=254, blank=False)
     USER = 'user'
     MODERATOR = 'moderator'
@@ -46,7 +45,11 @@ class User(AbstractUser):
 
     @property
     def is_admin(self):
-        return self.role == self.ROLE_CHOICES[2][0]
+        return self.role == self.ADMIN
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR
 
 
 class Category(models.Model):

@@ -2,39 +2,62 @@ from rest_framework import serializers
 from rest_framework import validators
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
-from rest_framework.validators import UniqueTogetherValidator, UniqueForYearValidator
+from rest_framework.validators import (
+    UniqueTogetherValidator, UniqueForYearValidator
+)
 from django.db.models import Avg
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
+
+    def validate_email(self,value):
+        if User.objects.filter(email=value):
+            raise serializers.ValidationError("email should be unique")
+        return value
+
+    def validate_username(self,value):
+        if User.objects.filter(username=value):
+            raise serializers.ValidationError("username should be unique")
+        return value
+
+    ################################
+    def create(self, validated_data):
+        return User.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.username = validated_data.get('username', instance.username)
+        instance.email = validated_data.get('email', instance.email)
+        instance.first_name = validated_data.get(
+            'first_name', instance.first_name
+        )
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.bio = validated_data.get('bio', instance.bio)
+        instance.save()
+        return instance
+
     class Meta:
         fields = (
             'username', 'email', 'first_name', 'last_name', 'bio', 'role'
         )
         model = User
 
-        validators = [
-            UniqueTogetherValidator(
-                queryset=User.objects.all(),
-                fields=('email',)),
-            UniqueTogetherValidator(
-                queryset=User.objects.all(),
-                fields=('username',))]
-
 
 class CreateUserInBaseSerializer(serializers.ModelSerializer):
+
+    def validate_email(self,value):
+        if User.objects.filter(email=value):
+            raise serializers.ValidationError("email should be unique")
+        return value
+
+    def validate_username(self,value):
+        if User.objects.filter(username=value):
+            raise serializers.ValidationError("username should be unique")
+        return value
+
     class Meta:
         fields = ('username', 'email')
         model = User
         read_only_fields = ('confirmation_code',)
-
-        validators = [
-            UniqueTogetherValidator(
-                queryset=User.objects.all(),
-                fields=('email',)),
-            UniqueTogetherValidator(
-                queryset=User.objects.all(),
-                fields=('username',))]
 
 
 class CreateTokenSerializer(serializers.ModelSerializer):
@@ -42,14 +65,6 @@ class CreateTokenSerializer(serializers.ModelSerializer):
         fields = ('username', 'confirmation_code')
         model = User
         read_only_fields = ('username', )
-
-
-class UserPatchMeSerializer(serializers.ModelSerializer):
-    class Meta:
-        fields = ('username', 'email', 'first_name', 'last_name', 'bio',
-                  'role')
-        model = User
-        read_only_fields = ('role',)
 
 
 class CategorySerializer(serializers.ModelSerializer):
