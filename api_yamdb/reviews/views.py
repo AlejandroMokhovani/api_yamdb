@@ -1,8 +1,9 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets, permissions, serializers
+from rest_framework.generics import RetrieveAPIView
 from rest_framework.mixins import (
-    CreateModelMixin, DestroyModelMixin, ListModelMixin
+    CreateModelMixin, DestroyModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 )
 from api.filters import TitleFilter
 from rest_framework.pagination import PageNumberPagination
@@ -24,7 +25,8 @@ from .models import Category, Genre, Title, Review
 
 
 class CustomMixin(ListModelMixin, CreateModelMixin, DestroyModelMixin,
-                  viewsets.GenericViewSet):
+                  RetrieveModelMixin, UpdateModelMixin,
+                  viewsets.GenericViewSet,):
     pass
 
 
@@ -38,12 +40,6 @@ class CategoryViewSet(CustomMixin):
     search_fields = ('name',)
     lookup_field = 'slug'
 
-    def retrieve(self, request, slug=None):
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def partial_update(self, request, slug=None):
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
 
 class GenreViewSet(CustomMixin):
     """API для жанров."""
@@ -54,6 +50,12 @@ class GenreViewSet(CustomMixin):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'
+
+    def retrieve(self, request, slug=None):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def partial_update(self, request, slug=None):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
@@ -102,10 +104,10 @@ class ReviewViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def get_queryset(self):
-
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         new_queryset = title.reviews.all()
         return new_queryset
+
 
     def perform_create(self, serializer):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
