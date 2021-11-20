@@ -138,7 +138,6 @@ class CommentSerializer(serializers.ModelSerializer):
         slug_field='username',
         default=serializers.CurrentUserDefault()
     )
-
     class Meta:
         fields = '__all__'
         model = Comment
