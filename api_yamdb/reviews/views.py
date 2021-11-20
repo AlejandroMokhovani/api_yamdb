@@ -94,7 +94,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
             raise serializers.ValidationError('Some message.')
 
 
-
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
     permission_classes = (UserPermission,)
