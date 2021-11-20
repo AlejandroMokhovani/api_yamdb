@@ -12,7 +12,8 @@ from rest_framework import status
 
 from api.permissions import (
     IsAdminOrReadOnly,
-    IsAuthorOrModerOrAdmin
+    IsAuthorOrModerOrAdmin,
+    UserPermission
 )
 from django.db import IntegrityError
 from api.serializers import (
@@ -77,31 +78,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-
-    def get_permissions(self):
-
-        # POST
-        if self.action in ('create',):
-            permission_classes = [permissions.IsAuthenticated]
-
-        # GET and GET LIST
-        elif self.action in ('list', 'retrieve',):
-            permission_classes = [permissions.AllowAny]
-
-        # UPDATE or DELETE
-        elif self.action in ('update', 'partial_update', 'destroy',):
-            permission_classes = [
-                permissions.IsAuthenticated,
-                IsAuthorOrModerOrAdmin
-            ]
-
-        # PUT очевидно D:
-        else:
-            permission_classes = [
-                permissions.IsAuthenticated,
-                IsAuthorOrModerOrAdmin
-            ]
-        return [permission() for permission in permission_classes]
+    permission_classes = (UserPermission,)
 
     def get_queryset(self):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
@@ -119,25 +96,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-
-    def get_permissions(self):
-
-        # POST
-        if self.action in ('create',):
-            permission_classes = [permissions.IsAuthenticated]
-
-        # GET and GET LIST
-        elif self.action in ('list', 'retrieve',):
-            permission_classes = [permissions.AllowAny]
-
-        # UPDATE or DELETE
-        elif self.action in ('update', 'partial_update', 'destroy',):
-            permission_classes = [
-                permissions.IsAuthenticated,
-                IsAuthorOrModerOrAdmin
-            ]
-
-        return [permission() for permission in permission_classes]
+    permission_classes = (UserPermission,)
 
     def get_queryset(self):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
