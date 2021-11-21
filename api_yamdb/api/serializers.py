@@ -5,6 +5,8 @@ from reviews.models import Category, Comment, Genre, Review, Title, User
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 
+
+
 class CreateUserSerializer(serializers.ModelSerializer):
 
     def validate_email(self, value):
