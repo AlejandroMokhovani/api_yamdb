@@ -10,7 +10,8 @@ from rest_framework import status
 
 from api.permissions import (
     IsAdminOrReadOnly,
-    IsAuthorOrModerOrAdmin
+    IsAuthorOrModerOrAdmin,
+    ReviewPermissions
 )
 from django.db import IntegrityError
 from api.serializers import (CategorySerializer, CommentSerializer,
@@ -72,31 +73,32 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
+    permission_classes = (ReviewPermissions,)
 
-    def get_permissions(self):
-
-        # POST
-        if self.action in ('create',):
-            permission_classes = [permissions.IsAuthenticated]
-
-        # GET and GET LIST
-        elif self.action in ('list', 'retrieve',):
-            permission_classes = [permissions.AllowAny]
-
-        # UPDATE or DELETE
-        elif self.action in ('update', 'partial_update', 'destroy',):
-            permission_classes = [
-                permissions.IsAuthenticated,
-                IsAuthorOrModerOrAdmin
-            ]
-
-        # PUT очевидно D:
-        else:
-            permission_classes = [
-                permissions.IsAuthenticated,
-                IsAuthorOrModerOrAdmin
-            ]
-        return [permission() for permission in permission_classes]
+    # def get_permissions(self):
+    #
+    #     # POST
+    #     if self.action in ('create',):
+    #         permission_classes = [permissions.IsAuthenticated]
+    #
+    #     # GET and GET LIST
+    #     elif self.action in ('list', 'retrieve',):
+    #         permission_classes = [permissions.AllowAny]
+    #
+    #     # UPDATE or DELETE
+    #     elif self.action in ('update', 'partial_update', 'destroy',):
+    #         permission_classes = [
+    #             permissions.IsAuthenticated,
+    #             IsAuthorOrModerOrAdmin
+    #         ]
+    #
+    #     # PUT очевидно D:
+    #     else:
+    #         permission_classes = [
+    #             permissions.IsAuthenticated,
+    #             IsAuthorOrModerOrAdmin
+    #         ]
+    #     return [permission() for permission in permission_classes]
 
     def get_queryset(self):
 
@@ -114,6 +116,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    # permission_classes = (ReviewPermissions,)
 
     def get_permissions(self):
 
