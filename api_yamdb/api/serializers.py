@@ -2,8 +2,8 @@ from django.db.models import Avg
 from rest_framework import serializers
 from rest_framework.validators import (UniqueForYearValidator)
 from reviews.models import Category, Comment, Genre, Review, Title, User
-from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from django.core.exceptions import ValidationError
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
