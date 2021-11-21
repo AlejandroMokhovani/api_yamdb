@@ -1,12 +1,16 @@
+from django.core.exceptions import ValidationError
+from django.http import request
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework import validators
+from rest_framework.exceptions import AuthenticationFailed
 from reviews.models import Category, Comment, Genre, Review, Title, User
 
 from rest_framework.validators import (
     UniqueTogetherValidator, UniqueForYearValidator
 )
 from django.db.models import Avg
-
+from django.db import IntegrityError
 
 class CreateUserSerializer(serializers.ModelSerializer):
 
@@ -125,12 +129,20 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
         default=serializers.CurrentUserDefault()
     )
-
+    
     class Meta:
         fields = '__all__'
         model = Review
         read_only_fields = ('id', 'title', 'author', 'pub_date')
 
+    def validate(self, data):
+        title_id = self.context['view'].kwargs.get('title_id')
+        title = get_object_or_404(Title, id=title_id)
+        request = self.context['request']
+        if request.method == 'POST':
+            if Review.objects.filter(author=request.user, title=title).exists():
+                raise ValidationError('Можно оставлять только одно ревью к тайтлу')
+        return data
 
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
