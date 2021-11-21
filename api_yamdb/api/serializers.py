@@ -137,6 +137,7 @@ class ReviewSerializer(serializers.ModelSerializer):
                 raise ValidationError('Можно оставлять только одно ревью к тайтлу')
         return data
 
+
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True,
