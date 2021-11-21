@@ -1,33 +1,24 @@
+from api.filters import TitleFilter
+from api.permissions import IsAdminOrReadOnly, UserPermission
+from api.serializers import (CategorySerializer, CommentSerializer,
+                             GenreSerializer, ReviewSerializer,
+                             TitleCreateSerializer, TitleSerializer)
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, viewsets, permissions, serializers
-from rest_framework.generics import RetrieveAPIView
-from rest_framework.mixins import (
-    CreateModelMixin, DestroyModelMixin, ListModelMixin, RetrieveModelMixin, UpdateModelMixin
-)
-from api.filters import TitleFilter
+from rest_framework import filters, serializers, status, viewsets
+from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
+                                   ListModelMixin, RetrieveModelMixin,
+                                   UpdateModelMixin)
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-from rest_framework import status
 
-from api.permissions import (
-    IsAdminOrReadOnly,
-    IsAuthorOrModerOrAdmin,
-    UserPermission
-)
-from django.db import IntegrityError
-from api.serializers import (
-    CategorySerializer, CommentSerializer,
-    GenreSerializer, ReviewSerializer,
-    TitleSerializer, TitleCreateSerializer
-)
-
-from .models import Category, Genre, Title, Review
+from .models import Category, Genre, Review, Title
 
 
 class CustomMixin(ListModelMixin, CreateModelMixin, DestroyModelMixin,
                   RetrieveModelMixin, UpdateModelMixin,
-                  viewsets.GenericViewSet,):
+                  viewsets.GenericViewSet):
     pass
 
 
@@ -85,7 +76,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
         new_queryset = title.reviews.all()
         return new_queryset
 
-
     def perform_create(self, serializer):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         try:
@@ -99,12 +89,10 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = (UserPermission,)
 
     def get_queryset(self):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
         new_queryset = review.comments.all()
         return new_queryset
 
     def perform_create(self, serializer):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
         serializer.save(author=self.request.user, reviews=review)

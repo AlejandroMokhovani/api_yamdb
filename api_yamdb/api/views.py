@@ -1,25 +1,18 @@
-from rest_framework import viewsets, filters, permissions
-from django.shortcuts import get_object_or_404
-from rest_framework.pagination import LimitOffsetPagination
 from django.core.mail import send_mail
-
+from django.shortcuts import get_object_or_404
+from django.utils.crypto import get_random_string
+from rest_framework import filters, permissions, status, viewsets
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-
 from reviews.models import User
 
-from django.utils.crypto import get_random_string
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from rest_framework import status
-
-from .serializers import CreateUserSerializer
-from .permissions import IsAdmin
-from .serializers import (
-    CreateUserSerializer,
-    CreateUserInBaseSerializer,
-    CreateTokenSerializer
-)
 from api_yamdb.settings import EMAIL_FROM
+
+from .permissions import IsAdmin
+from .serializers import (CreateTokenSerializer, CreateUserInBaseSerializer,
+                          CreateUserSerializer)
 
 
 def get_tokens_for_user(user):

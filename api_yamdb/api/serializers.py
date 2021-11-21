@@ -1,26 +1,21 @@
-from rest_framework import serializers
-from rest_framework import validators
-from reviews.models import Category, Comment, Genre, Review, Title, User
-
-from rest_framework.validators import (
-    UniqueTogetherValidator, UniqueForYearValidator
-)
 from django.db.models import Avg
+from rest_framework import serializers
+from rest_framework.validators import (UniqueForYearValidator)
+from reviews.models import Category, Comment, Genre, Review, Title, User
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
 
-    def validate_email(self,value):
+    def validate_email(self, value):
         if User.objects.filter(email=value):
             raise serializers.ValidationError("email should be unique")
         return value
 
-    def validate_username(self,value):
+    def validate_username(self, value):
         if User.objects.filter(username=value):
             raise serializers.ValidationError("username should be unique")
         return value
 
-    ################################
     def create(self, validated_data):
         return User.objects.create(**validated_data)
 
@@ -30,7 +25,9 @@ class CreateUserSerializer(serializers.ModelSerializer):
         instance.first_name = validated_data.get(
             'first_name', instance.first_name
         )
-        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.last_name = validated_data.get(
+            'last_name', instance.last_name
+        )
         instance.bio = validated_data.get('bio', instance.bio)
         instance.save()
         return instance
@@ -44,12 +41,12 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
 class CreateUserInBaseSerializer(serializers.ModelSerializer):
 
-    def validate_email(self,value):
+    def validate_email(self, value):
         if User.objects.filter(email=value):
             raise serializers.ValidationError("email should be unique")
         return value
 
-    def validate_username(self,value):
+    def validate_username(self, value):
         if User.objects.filter(username=value):
             raise serializers.ValidationError("username should be unique")
         return value
@@ -92,8 +89,7 @@ class TitleSerializer(serializers.ModelSerializer):
         validators = UniqueForYearValidator(queryset=Title.objects.all(),
                                             field='pk',
                                             date_field='published',
-                                            message='Неверно указан год'
-                    )
+                                            message='Неверно указан год')
 
     def get_rating(self, obj):
         try:
@@ -138,6 +134,7 @@ class CommentSerializer(serializers.ModelSerializer):
         slug_field='username',
         default=serializers.CurrentUserDefault()
     )
+
     class Meta:
         fields = '__all__'
         model = Comment
