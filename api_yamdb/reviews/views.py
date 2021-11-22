@@ -16,7 +16,6 @@ from .models import Category, Genre, Review, Title
 
 
 class CustomMixin(ListModelMixin, CreateModelMixin, DestroyModelMixin,
-                  RetrieveModelMixin, UpdateModelMixin,
                   viewsets.GenericViewSet):
     pass
 
