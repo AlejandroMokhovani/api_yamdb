@@ -3,10 +3,9 @@ from api.permissions import IsAdminOrReadOnly, UserPermission
 from api.serializers import (CategorySerializer, CommentSerializer,
                              GenreSerializer, ReviewSerializer,
                              TitleCreateSerializer, TitleSerializer)
-from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, serializers, status, viewsets
+from rest_framework import filters, status, viewsets
 from rest_framework.mixins import (CreateModelMixin, DestroyModelMixin,
                                    ListModelMixin, RetrieveModelMixin,
                                    UpdateModelMixin)
@@ -81,8 +80,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user, title=title)
         serializer.is_valid(raise_exception=True)
 
-            
-
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
@@ -90,7 +87,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
-        new_queryset = review.comments.all()    
+        new_queryset = review.comments.all()
         return new_queryset
 
     def perform_create(self, serializer):

@@ -1,6 +1,6 @@
 from django.db.models import Avg
 from rest_framework import serializers
-from rest_framework.validators import (UniqueForYearValidator)
+from rest_framework.validators import UniqueForYearValidator
 from reviews.models import Category, Comment, Genre, Review, Title, User
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
@@ -123,7 +123,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
         default=serializers.CurrentUserDefault()
     )
-    
+
     class Meta:
         fields = '__all__'
         model = Review
@@ -134,8 +134,11 @@ class ReviewSerializer(serializers.ModelSerializer):
         title = get_object_or_404(Title, id=title_id)
         request = self.context['request']
         if request.method == 'POST':
-            if Review.objects.filter(author=request.user, title=title).exists():
-                raise ValidationError('Можно оставлять только одно ревью к тайтлу')
+            if Review.objects.filter(author=request.user,
+                                     title=title).exists():
+                raise ValidationError(
+                    'Можно оставлять только одно ревью к тайтлу'
+                )
         return data
 
 
