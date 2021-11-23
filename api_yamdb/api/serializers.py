@@ -1,22 +1,18 @@
 from django.db.models import Avg
 from rest_framework import serializers
-from rest_framework.validators import UniqueForYearValidator
+from rest_framework.validators import UniqueForYearValidator, UniqueValidator
 from reviews.models import Category, Comment, Genre, Review, Title, User
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
-
+from django.db.models import EmailField, CharField
 
 class CreateUserSerializer(serializers.ModelSerializer):
-
-    def validate_email(self, value):
-        if User.objects.filter(email=value):
-            raise serializers.ValidationError("email should be unique")
-        return value
-
-    def validate_username(self, value):
-        if User.objects.filter(username=value):
-            raise serializers.ValidationError("username should be unique")
-        return value
+    email = EmailField(
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+    username = CharField(
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
 
     def create(self, validated_data):
         return User.objects.create(**validated_data)
@@ -43,15 +39,12 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
 class CreateUserInBaseSerializer(serializers.ModelSerializer):
 
-    def validate_email(self, value):
-        if User.objects.filter(email=value):
-            raise serializers.ValidationError("email should be unique")
-        return value
-
-    def validate_username(self, value):
-        if User.objects.filter(username=value):
-            raise serializers.ValidationError("username should be unique")
-        return value
+    email = EmailField(
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
+    username = CharField(
+        validators=[UniqueValidator(queryset=User.objects.all())]
+    )
 
     class Meta:
         fields = ('username', 'email')

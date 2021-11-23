@@ -6,7 +6,9 @@ from .validators import score_validation, text_validation
 
 
 class User(AbstractUser):
-    email = models.EmailField('email', max_length=254, blank=False)
+    email = models.EmailField(
+        'email', max_length=254, blank=False, unique=True
+    )
     USER = 'user'
     MODERATOR = 'moderator'
     ADMIN = 'admin'
